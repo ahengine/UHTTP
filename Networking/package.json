@@ -1,0 +1,12 @@
+{
+  "name": "com.hrk.networking",
+  "version": "1.0.0",
+  "displayName": "Networking",
+  "description": "Networking",
+  "unity": "2021.1",
+  "unityRelease": "0b5",
+  "author": {
+    "name": "Hamidreza Karamian"
+  },
+  "type": "library"
+}

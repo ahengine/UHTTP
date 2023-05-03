@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 571eba4aac053864abe1488851a6e196, type: 3}
+  m_Name: Token Resolver
+  m_EditorClassIdentifier: 
+  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZjllNmU2YjYzM2VlNTJmODQ3OGIzZjRkMGNjZmJmMjZhYTIwODBlY2E2ZWY4OWM1Y2Q4ZjRmNjYyYjMxMTJjNzI0Njg4NjQyZTVmMDBiNmQiLCJpYXQiOjE2ODMwNDE1NzYuMjk1Nzk2LCJuYmYiOjE2ODMwNDE1NzYuMjk1ODA1LCJleHAiOjE3MTQ2NjM5NzYuMjcxNTA4LCJzdWIiOiIxNzA5Iiwic2NvcGVzIjpbInVzZXIiXX0.hPIP6yI2yWiDfjAEoviPGtpGqeLOQGdDhylkVYgpMfIHbw7bIskga-wy-rzfI48uU5nOzlNOPs7ZZq79xTlH6bIWWbq3UFEzoRg27y4JnDT-DumdMc6tboXqLhA7yqvVBogh8Qe3BauNaD8Hr6TDy-JxeE89JMRaTaptPAwSQ_cENG45ws2FPb22CzsI8ZYdpN9nVahcGNvVfFtX2Q3KbQsGLVQTIDGl-YROn5thsnyIwM0tL0Itb27LFMBU8KbM5wJor1hNY9QmEClMlI8uAkl58OxCca1t5PsVJgQisf0gQjyflUd1314ANeZAjI06pux2TtiRUn8r7m4rzRYLoWa4zLjEEI5CqWrAEWOB20zujTZkNwxBST0txx-sSD5EAWuG-yShg4BMQZBThxtk4CJAkZKkKEeB-D_mxoenePzHCCfnxBKmkzrrGPBhse14RDeKeFDZEZ1CUqMspTzyPVnHfwWC_zkeMfwFHM_owMnSmNwqkUxhchb2CPEKrENiOur7kAnr_v30CN7_tZce9D4K7Lte8Fz_sZhA3zSkkCZbTtVW8EVFY9IbHbWYZeL2TDpu6n8eNqxDMhjON244J0dyCTyi6BBVhjzcF4gFsscaKZwjhIlWfAxS7x1wXrFwqHH6oR5QnzzX-eLrgXuGxXjlSAeDwWW14IlruEwRLCU
