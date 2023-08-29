@@ -54,6 +54,7 @@ namespace Networking
             yield return request.SendWebRequest();
 
             callback?.Invoke(request);
+            request.Dispose();
         }
 
         class AcceptAllCertificates : CertificateHandler
