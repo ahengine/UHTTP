@@ -16,7 +16,7 @@ namespace Networking.WebRequestHandler
                 new KeyValuePair<string, string>("Accept", "application/json"),
             };
 
-        public delegate void RequestCallback(UnityWebRequest.Result result, long responseCode, DownloadHandler downloadHandler);
+        public delegate void RequestCallback(UnityWebRequest.Result result, long responseCode, DownloadHandler downloadHandler, Dictionary<string,string> responseHeaders);
 
         private static Action<Action> TokenResolver;
         public static void SetTokenResolver(Action<Action> tokenResolver) =>
@@ -36,7 +36,7 @@ namespace Networking.WebRequestHandler
                 headers = new List<KeyValuePair<string, string>>();
 
             void CallBack(UnityWebRequest request) =>
-                callbackAction(request.result, request.responseCode, request.downloadHandler);
+                callbackAction(request.result, request.responseCode, request.downloadHandler, request.GetResponseHeaders());
             void ReviewToken(UnityWebRequest request)
             {
                 if (request.responseCode != (int)HTTPResponseCodes.UNAUTHORIZED_401)
