@@ -1,7 +1,7 @@
 # UHTTPClient
- This is a http request helper with JWT suppurt for using in unity projects
+ This is a http request service unity package that supports JWT (Access/Refresh Token)
  
- Install from UnityPackage Manager
+ Install it from UnityPackage Manager
 
 dependencies:
  - com.unity.nuget.newtonsoft-json
