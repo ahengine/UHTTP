@@ -4,10 +4,9 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
-using RequestHandler = Networking.WebRequestHandler.WebRequestHandler;
-using ResponseCodes = Networking.WebRequestHandler.HTTPResponseCodes;
+using ResponseCodes = HTTPRequestService.HTTPResponseCodes;
 
-namespace Networking.JWTTokenResolver.Helpers
+namespace HTTPRequestService.Helpers
 {
     public class SampleTokenResolver
     {
@@ -16,7 +15,7 @@ namespace Networking.JWTTokenResolver.Helpers
         {
             return;
 
-            RequestHandler.SetTokenResolver(ResolveAccessToken);
+            HTTPRequest.SetTokenResolver(ResolveAccessToken);
         }
         private static void ResolveAccessToken(Action requestAction)
         {
@@ -38,10 +37,16 @@ namespace Networking.JWTTokenResolver.Helpers
                 requestAction?.Invoke();
             }
 
-            List<KeyValuePair<string, string>> headers = new List<KeyValuePair<string, string>>();
-            Dictionary<string, object> body = new Dictionary<string, object>();
+            Dictionary<string, string> body = new Dictionary<string, string>();
             body.Add("Token", JWTTokenResolver.RefreshToken);
-            HTTPService.SendData(HTTPRequestMethod.POST, "YourURL", Resolve, headers.ToArray(), JsonConvert.SerializeObject(body));
+            var req = new HTTPRequest()
+            {
+                url="Your URL",
+                method=HTTPRequestMethod.POST,
+                postFields=body,
+                callback = Resolve
+            };
+            req.Send();
         }
     }
 }

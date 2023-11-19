@@ -1,4 +1,4 @@
-namespace Networking.WebRequestHandler
+namespace HTTPRequestService
 {
     public enum HTTPResponseCodes
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Networking.JWTTokenResolver
+namespace HTTPRequestService
 {
     public static class JWTTokenResolver
     {

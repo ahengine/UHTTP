@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Networking
+namespace HTTPRequestService
 {
     public static class XAPIGenerator 
     {

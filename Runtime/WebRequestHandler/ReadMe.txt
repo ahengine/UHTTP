@@ -1,3 +1,3 @@
 Dependencies: 
-	- MiniJsonSerializer
+	- JWTTokenResolver
 	- HTTPService

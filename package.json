@@ -1,12 +1,12 @@
 {
-  "name": "com.ahengine.networking",
-  "version": "1.0.2",
-  "displayName": "Networking",
-  "description": "Networking",
-  "unity": "2021.1",
-  "unityRelease": "0b5",
+  "name": "com.ahengine.httprequestservice",
+  "version": "1.0.3",
+  "displayName": "HTTPRequestService",
+  "description": "HTTPRequestService",
+  "unity": "2022.3",
+  "unityRelease": "0b6",
   "author": {
     "name": "Hamidreza Karamian"
   },
-  "type": "library"
+  "type": "module"
 }

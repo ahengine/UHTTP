@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Networking.JWTTokenResolver.Helpers
+namespace HTTPRequestService.Helpers
 {
     [CreateAssetMenu(fileName ="Token Resolver",menuName ="Resolver/Token Resolver",order = 51)]
     public class TokenResolver : ScriptableObject
