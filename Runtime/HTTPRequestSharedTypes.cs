@@ -1,5 +1,7 @@
 namespace HTTPRequestService
 {
+    public enum HTTPRequestMethod { GET, POST, PUT }
+
     public enum HTTPResponseCodes
     {
         OK_200 = 200,
