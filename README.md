@@ -1,4 +1,4 @@
-# UHTTPClient
+# UHTTP
  This is a http request service unity package that supports JWT (Access/Refresh Token)
  
  Install it from UnityPackage Manager
