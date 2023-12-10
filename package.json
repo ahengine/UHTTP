@@ -8,5 +8,8 @@
   "author": {
     "name": "Hamidreza Karamian"
   },
-  "type": "library"
+    "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+  },
+  "type": "module"
 }
