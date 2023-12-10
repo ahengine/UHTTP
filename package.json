@@ -9,7 +9,7 @@
     "name": "Hamidreza Karamian"
   },
     "dependencies": {
-    "com.unity.nuget.newtonsoft-json": "latest"
+    "com.unity.nuget.newtonsoft-json": "12.0.301"
   },
   "type": "library"
 }
