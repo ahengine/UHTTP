@@ -1,8 +1,8 @@
 {
-  "name": "com.ahengine.httprequestservice",
+  "name": "com.ahengine.UHTTP",
   "version": "1.0.3",
-  "displayName": "HTTPRequestService",
-  "description": "HTTPRequestService",
+  "displayName": "UHTTP",
+  "description": "UHTTP",
   "unity": "2022.3",
   "unityRelease": "0b6",
   "author": {
