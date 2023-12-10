@@ -5,5 +5,6 @@
 
 dependencies:
  - com.unity.nuget.newtonsoft-json
+ - com.unity.modules.unitywebrequest
  
  Based on UnityWebRequest
