@@ -15,7 +15,6 @@ namespace UHTTP.Sample.TodoModule
         public void GetById(int id, Action<UnityWebRequest> responseCallback)
         {
             GetTodoById.SetAdditionalURL(id.ToString());
-            Debug.Log(GetTodoById.URLFull);
             GetTodoById.Send(responseCallback);
         }
     }
