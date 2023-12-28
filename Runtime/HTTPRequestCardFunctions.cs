@@ -1,11 +1,9 @@
 using System;
-using UnityEngine;
 using UnityEngine.Networking;
 using UHTTP;
 
 public partial class HTTPRequestCard
 {
-
         public HTTPRequest CreateRequest() =>
                 new HTTPRequest(this);
         public HTTPRequest Send(Action<UnityWebRequest> callback) =>
@@ -16,7 +14,7 @@ public partial class HTTPRequestCard
 
         public void SetAdditionalURL(string additionalURL) =>
                 AdditionalURL = additionalURL;
-        
+
         public void SetBodyJson(string json) =>
                 BodyJson = json;
 
@@ -25,13 +23,13 @@ public partial class HTTPRequestCard
 
         public void ClearHeaders() =>
                 headers.Clear();
-                
+
         public void AddPostField(KeyValueItem newPostField) =>
                 postFields.Add(newPostField);
 
         public void ClearPostFields() =>
                 postFields.Clear();
-                
+
         public void AddPostFormField(KeyValueItem newPostFormField) =>
                 postFormFields.Add(newPostFormField);
 

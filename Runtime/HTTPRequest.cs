@@ -1,3 +1,4 @@
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 using UnityEngine.Networking;
@@ -9,14 +10,6 @@ namespace UHTTP
 {
     public class HTTPRequest
     {
-        private static HTTPRequestCard RefreshTokenCard;
-        private static Action<string> AccessTokenResolverFromRefreshResponse;
-        public static void SetRefreshTokenData(HTTPRequestCard refreshTokenCard, Action<string> SetNewAccessToken) 
-        {
-            RefreshTokenCard = refreshTokenCard;
-            AccessTokenResolverFromRefreshResponse = SetNewAccessToken;
-        }
-
         public HTTPRequestCard Card { private set; get; }
         public Action<UnityWebRequest> callback;
 
@@ -30,7 +23,6 @@ namespace UHTTP
             return this;
         }
            
-
         public void SetCard(HTTPRequestCard card) =>
             Card = card;
 
@@ -38,20 +30,15 @@ namespace UHTTP
         {
             UnityWebRequest Create() 
             {
-                if (Card.PostForm != null)
-                    return UnityWebRequest.Post(Card.URLFull, Card.PostForm);
-                else if (Card.PostFields != null)
-                    return UnityWebRequest.Post(Card.URLFull, Card.PostFields);
-                else
                     return new UnityWebRequest()
                     {
-                        method = Card.Method.ToString(),
+                        method = Card.MethodStr,
                         url = Card.URLFull
                     };
             }
 
             UnityWebRequest request = Create();
-
+            
             void AddBody()
             {
                 byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(Card.BodyJson);
@@ -74,6 +61,7 @@ namespace UHTTP
                     new KeyValuePair<string, string>("Content-Type", "application/json"),
                     new KeyValuePair<string, string>("Accept", "application/json")
                 });
+
                 // Add JWT
                 if (Card.HaveAuth && !string.IsNullOrEmpty(JWTResolver.AccessToken))
                     totalHeaders.Add(JWTResolver.AccessTokenHeader);
@@ -94,7 +82,6 @@ namespace UHTTP
             return this;
         }
 
-
         public IEnumerator SendCoroutine()
         {
             void ReviewToken(UnityWebRequest request)
@@ -109,9 +96,12 @@ namespace UHTTP
                 JWTResolver.RemoveAccessToken();
 
                 if (Card.HaveAuth)
-                    ResolveAccessToken(()=> Send());
-                else
-                    callback(request);
+                {
+                    JWTResolver.ResolveAccessToken(() => Send());
+                    return;
+                }
+ 
+                callback(request);
             }
 
             var request = CreateRequest();
@@ -122,33 +112,6 @@ namespace UHTTP
             else 
                 callback?.Invoke(request);
             request.Dispose();
-        }
-
-        private static void ResolveAccessToken(Action requestAction)
-        {
-            if (string.IsNullOrEmpty(JWTResolver.RefreshToken))
-            {
-                requestAction?.Invoke();
-                return;
-            }
-
-            void Resolve(UnityWebRequest request)
-            {
-                if (request.responseCode == (int)HTTPResponseCodes.UNAUTHORIZED_401 ||
-                    request.responseCode == (int)HTTPResponseCodes.FORBIDEN_403)
-                    JWTResolver.RemoveTokens();
-                else
-                    AccessTokenResolverFromRefreshResponse?.Invoke(request.downloadHandler.text);
-
-                requestAction?.Invoke();
-            }
-
-            var req = new HTTPRequest()
-            {
-                callback = Resolve
-            };
-            req.SetCard(RefreshTokenCard);
-            req.Send();
         }
     }
 }

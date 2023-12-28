@@ -1,6 +1,13 @@
+using UnityEngine.Networking;
+
 namespace UHTTP
 {
-    public enum HTTPRequestMethod { GET, POST, PUT }
+    public enum HTTPRequestMethod 
+    { 
+        GET, 
+        POST, 
+        PUT 
+    }
 
     public enum HTTPResponseCodes
     {

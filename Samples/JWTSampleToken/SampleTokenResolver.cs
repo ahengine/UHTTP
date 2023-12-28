@@ -12,7 +12,7 @@ namespace UHTTP.Sample
             void SetAccessToken(string json) =>
                     JWTTokenResolver.SetAccessToken(json);
 
-            HTTPRequest.SetRefreshTokenData(null,SetAccessToken);
+            JWTTokenResolver.SetRefreshTokenData(null,SetAccessToken);
         }
     }
 }
