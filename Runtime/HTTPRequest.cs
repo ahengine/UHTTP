@@ -1,41 +1,45 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.Networking;
-using JWTResolver = HTTPRequestService.JWTTokenResolver;
-using static HTTPRequestService.HTTPRequestCoroutineRunner;
+using JWTResolver = UHTTP.JWTTokenResolver;
+using static UHTTP.HTTPRequestCoroutineRunner;
 using System.Collections;
 
-namespace HTTPRequestService
+namespace UHTTP
 {
     public class HTTPRequest
     {
-        private static Action<Action> TokenResolver;
-        public static void SetTokenResolver(Action<Action> tokenResolver) =>
-            TokenResolver = tokenResolver;
+        private static HTTPRequestCard RefreshTokenCard;
+        private static Action<string> AccessTokenResolverFromRefreshResponse;
+        public static void SetRefreshTokenData(HTTPRequestCard refreshTokenCard, Action<string> SetNewAccessToken) 
+        {
+            RefreshTokenCard = refreshTokenCard;
+            AccessTokenResolverFromRefreshResponse = SetNewAccessToken;
+        }
 
-        public KeyValuePair<string, string>[] headers;
-        public HTTPRequestMethod method;
-        public string url;
-        public bool haveAuth;
-        public string bodyJson;
-        public WWWForm postForm;
-        public Dictionary<string, string> postFields;
+        public HTTPRequestCard Card { private set; get; }
         public Action<UnityWebRequest> callback;
+
+        public HTTPRequest() { }
+        public HTTPRequest(HTTPRequestCard card) =>
+            Card = card;
+
+        public void SetCard(HTTPRequestCard card) =>
+            Card = card;
 
         private UnityWebRequest CreateRequest()
         {
             UnityWebRequest Create() 
             {
-                if (postForm != null)
-                    return UnityWebRequest.Post(url, postForm);
-                else if (postFields != null)
-                    return UnityWebRequest.Post(url, postFields);
+                if (Card.PostForm != null)
+                    return UnityWebRequest.Post(Card.URL, Card.PostForm);
+                else if (Card.PostFields != null)
+                    return UnityWebRequest.Post(Card.URL, Card.PostFields);
                 else
                     return new UnityWebRequest()
                     {
-                        method = method.ToString(),
-                        url = url
+                        method = Card.Method.ToString(),
+                        url = Card.URL
                     };
             }
 
@@ -43,20 +47,20 @@ namespace HTTPRequestService
 
             void AddBody()
             {
-                byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(bodyJson);
+                byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(Card.BodyJson);
                 request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             }
 
             // Add Body
-            if (!string.IsNullOrEmpty(bodyJson))
+            if (!string.IsNullOrEmpty(Card.BodyJson))
                 AddBody();
 
             void SetHeaders()
             {
                 List<KeyValuePair<string, string>> totalHeaders = new List<KeyValuePair<string, string>>();
 
-                if(headers != null)
-                    totalHeaders.AddRange(headers);
+                if(Card.Headers != null)
+                    totalHeaders.AddRange(Card.Headers);
 
                 // Add Defaults
                 totalHeaders.AddRange(new KeyValuePair<string, string>[]  {
@@ -64,7 +68,7 @@ namespace HTTPRequestService
                     new KeyValuePair<string, string>("Accept", "application/json")
                 });
                 // Add JWT
-                if (haveAuth && !string.IsNullOrEmpty(JWTResolver.AccessToken))
+                if (Card.HaveAuth && !string.IsNullOrEmpty(JWTResolver.AccessToken))
                     totalHeaders.Add(JWTResolver.AccessTokenHeader);
                 
                 // Set
@@ -84,7 +88,8 @@ namespace HTTPRequestService
         {
             void ReviewToken(UnityWebRequest request)
             {
-                if (request.responseCode != (int)HTTPResponseCodes.UNAUTHORIZED_401)
+                if (request.responseCode != (int)HTTPResponseCodes.UNAUTHORIZED_401 && 
+                    request.responseCode != (int)HTTPResponseCodes.FORBIDEN_403)
                 {
                     callback(request);
                     return;
@@ -92,8 +97,8 @@ namespace HTTPRequestService
 
                 JWTResolver.RemoveAccessToken();
 
-                if (TokenResolver != null)
-                    TokenResolver(Send);
+                if (Card.HaveAuth)
+                    ResolveAccessToken(Send);
                 else
                     callback(request);
             }
@@ -101,11 +106,38 @@ namespace HTTPRequestService
             var request = CreateRequest();
             request.downloadHandler = new DownloadHandlerBuffer();
             yield return request.SendWebRequest();
-            if (haveAuth)
+            if (Card.HaveAuth)
                 ReviewToken(request);
             else 
                 callback?.Invoke(request);
             request.Dispose();
+        }
+
+        private static void ResolveAccessToken(Action requestAction)
+        {
+            if (string.IsNullOrEmpty(JWTResolver.RefreshToken))
+            {
+                requestAction?.Invoke();
+                return;
+            }
+
+            void Resolve(UnityWebRequest request)
+            {
+                if (request.responseCode == (int)HTTPResponseCodes.UNAUTHORIZED_401 ||
+                    request.responseCode == (int)HTTPResponseCodes.FORBIDEN_403)
+                    JWTResolver.RemoveTokens();
+                else
+                    AccessTokenResolverFromRefreshResponse?.Invoke(request.downloadHandler.text);
+
+                requestAction?.Invoke();
+            }
+
+            var req = new HTTPRequest()
+            {
+                callback = Resolve
+            };
+            req.SetCard(RefreshTokenCard);
+            req.Send();
         }
     }
 }

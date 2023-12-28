@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace HTTPRequestService
+namespace UHTTP
 {
     public class HTTPRequestCoroutineRunner : MonoBehaviour
     {

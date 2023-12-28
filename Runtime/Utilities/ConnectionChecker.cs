@@ -1,7 +1,7 @@
 using UnityEngine;
 using IEnumerator = System.Collections.IEnumerator;
 
-namespace HTTPRequestService.Helpers
+namespace UHTTP.Helpers
 {
     public class ConnectionChecker : MonoBehaviour
     {
