@@ -24,6 +24,13 @@ namespace UHTTP
         public HTTPRequest(HTTPRequestCard card) =>
             Card = card;
 
+        public HTTPRequest SetCallback(Action<UnityWebRequest> callback) 
+        {
+            this.callback = callback;
+            return this;
+        }
+           
+
         public void SetCard(HTTPRequestCard card) =>
             Card = card;
 
@@ -32,14 +39,14 @@ namespace UHTTP
             UnityWebRequest Create() 
             {
                 if (Card.PostForm != null)
-                    return UnityWebRequest.Post(Card.URL, Card.PostForm);
+                    return UnityWebRequest.Post(Card.URLFull, Card.PostForm);
                 else if (Card.PostFields != null)
-                    return UnityWebRequest.Post(Card.URL, Card.PostFields);
+                    return UnityWebRequest.Post(Card.URLFull, Card.PostFields);
                 else
                     return new UnityWebRequest()
                     {
                         method = Card.Method.ToString(),
-                        url = Card.URL
+                        url = Card.URLFull
                     };
             }
 
@@ -81,8 +88,12 @@ namespace UHTTP
             return request;
         }   
 
-        public void Send() =>
+        public HTTPRequest Send() 
+        {
             Run(SendCoroutine());
+            return this;
+        }
+
 
         public IEnumerator SendCoroutine()
         {
@@ -98,7 +109,7 @@ namespace UHTTP
                 JWTResolver.RemoveAccessToken();
 
                 if (Card.HaveAuth)
-                    ResolveAccessToken(Send);
+                    ResolveAccessToken(()=> Send());
                 else
                     callback(request);
             }

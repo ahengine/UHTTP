@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace UHTTP.Helpers
 {
-    [CreateAssetMenu(fileName ="Token Resolver",menuName ="Resolver/Token Resolver",order = 51)]
+    [CreateAssetMenu(fileName ="Token Resolver",menuName ="Cards/Token Resolver",order = 0)]
     public class TokenResolver : ScriptableObject
     {
         [SerializeField, TextArea] private string token;

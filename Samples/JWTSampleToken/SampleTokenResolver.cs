@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UHTTP.Helpers
+namespace UHTTP.Sample
 {
     public class SampleTokenResolver
     {

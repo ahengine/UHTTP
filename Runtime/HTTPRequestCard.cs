@@ -1,17 +1,18 @@
+using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UHTTP;
-using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "HTTPRequestCard", menuName = "Cards/HTTPRequestCard", order = 0)]
-public class HTTPRequestCard : ScriptableObject {
-
+public partial class HTTPRequestCard : ScriptableObject 
+{
         public KeyValuePair<string, string>[] Headers
         {
                 get
                 {
-                        KeyValuePair<string, string>[] keys = new KeyValuePair<string, string>[headers.Length];
+                        KeyValuePair<string, string>[] keys = new KeyValuePair<string, string>[headers.Count];
 
-                        for (int i = 0; i < headers.Length; i++)
+                        for (int i = 0; i < headers.Count; i++)
                                 keys[i] = new KeyValuePair<string, string>(headers[i].key, headers[i].value);
 
                         return keys;
@@ -37,18 +38,18 @@ public class HTTPRequestCard : ScriptableObject {
                         return form;
                 }
         }
-        [SerializeField] private KeyValueItem[] headers;
+        [SerializeField] private List<KeyValueItem> headers;
         [field:SerializeField] public HTTPRequestMethod Method { private set; get; }
+        public string URLFull => URL + AdditionalURL;
         [field:SerializeField] public string URL { private set; get; }
+        [field:SerializeField] public string AdditionalURL { private set; get; }
         [field:SerializeField] public bool HaveAuth { private set; get; }
         [field:SerializeField] public string BodyJson { private set; get; }
         [SerializeField] private List<KeyValueItem> postFields;
-
-        [SerializeField] private List<KeyValueItem> postForm;
-
+        [SerializeField] private List<KeyValueItem> postFormFields;
 }
 
-[System.Serializable]
+[Serializable]
 public class KeyValueItem
 {
     public string key;
