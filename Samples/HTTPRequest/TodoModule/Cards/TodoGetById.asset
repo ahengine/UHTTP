@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: TodoGetById
   m_EditorClassIdentifier: 
   headers: []
-  <Method>k__BackingField: 0
   <URL>k__BackingField: https://jsonplaceholder.typicode.com/todos/
-  <AdditionalURL>k__BackingField: 
+  <Method>k__BackingField: 0
   <HaveAuth>k__BackingField: 0
   <BodyJson>k__BackingField: 
   postFields: []
