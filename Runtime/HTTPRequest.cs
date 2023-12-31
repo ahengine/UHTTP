@@ -1,4 +1,3 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
 using UnityEngine.Networking;
@@ -10,12 +9,12 @@ namespace UHTTP
 {
     public class HTTPRequest
     {
-        public HTTPRequestCard Card { private set; get; }
+        public HTTPRequestData Data { private set; get; }
         public Action<UnityWebRequest> callback;
 
         public HTTPRequest() { }
-        public HTTPRequest(HTTPRequestCard card) =>
-            Card = card;
+        public HTTPRequest(HTTPRequestData data) =>
+            Data = data;
 
         public HTTPRequest SetCallback(Action<UnityWebRequest> callback) 
         {
@@ -23,8 +22,8 @@ namespace UHTTP
             return this;
         }
            
-        public void SetCard(HTTPRequestCard card) =>
-            Card = card;
+        public void SetCard(HTTPRequestData data) =>
+            Data = data;
 
         private UnityWebRequest CreateRequest()
         {
@@ -32,8 +31,8 @@ namespace UHTTP
             {
                     return new UnityWebRequest()
                     {
-                        method = Card.MethodStr,
-                        url = Card.URLFull
+                        method = Data.Method,
+                        url = Data.URLFull
                     };
             }
 
@@ -41,20 +40,20 @@ namespace UHTTP
             
             void AddBody()
             {
-                byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(Card.BodyJson);
+                byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(Data.BodyJson);
                 request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             }
 
             // Add Body
-            if (!string.IsNullOrEmpty(Card.BodyJson))
+            if (!string.IsNullOrEmpty(Data.BodyJson))
                 AddBody();
 
             void SetHeaders()
             {
                 List<KeyValuePair<string, string>> totalHeaders = new List<KeyValuePair<string, string>>();
 
-                if(Card.Headers != null)
-                    totalHeaders.AddRange(Card.Headers);
+                if(Data.Headers != null)
+                    totalHeaders.AddRange(Data.Headers);
 
                 // Add Defaults
                 totalHeaders.AddRange(new KeyValuePair<string, string>[]  {
@@ -63,7 +62,7 @@ namespace UHTTP
                 });
 
                 // Add JWT
-                if (Card.HaveAuth && !string.IsNullOrEmpty(JWTResolver.AccessToken))
+                if (Data.HaveAuth && !string.IsNullOrEmpty(JWTResolver.AccessToken))
                     totalHeaders.Add(JWTResolver.AccessTokenHeader);
                 
                 // Set
@@ -95,7 +94,7 @@ namespace UHTTP
 
                 JWTResolver.RemoveAccessToken();
 
-                if (Card.HaveAuth)
+                if (Data.HaveAuth)
                 {
                     JWTResolver.ResolveAccessToken(() => Send());
                     return;
@@ -107,7 +106,7 @@ namespace UHTTP
             var request = CreateRequest();
             request.downloadHandler = new DownloadHandlerBuffer();
             yield return request.SendWebRequest();
-            if (Card.HaveAuth)
+            if (Data.HaveAuth)
                 ReviewToken(request);
             else 
                 callback?.Invoke(request);

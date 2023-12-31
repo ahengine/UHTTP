@@ -65,7 +65,7 @@ namespace UHTTP
             {
                 callback = Resolve
             };
-            req.SetCard(RefreshTokenCard);
+            req.SetCard(RefreshTokenCard.CreateRequestData());
             req.Send();
         }
     }   

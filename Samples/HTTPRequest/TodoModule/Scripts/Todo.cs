@@ -4,10 +4,10 @@ namespace UHTTP.Sample.TodoModule
 {
     public class Todo
     {
-        public int userId { get; set; }
-        public int id { get; set; }
-        public string title { get; set; }
-        public bool completed { get; set; }
+        public int userId { get; }
+        public int id { get; }
+        public string title { get; }
+        public bool completed { get; }
 
         [JsonConstructor]
         public Todo(int userId, int id, string title, bool completed) {

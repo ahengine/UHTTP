@@ -11,7 +11,7 @@ namespace UHTTP.Sample.TodoModule
         public static TodoController Instance => instance ?? CreateInstance();
         private TodoProvider provider;
 
-        private static TodoController CreateInstance() 
+        private static TodoController CreateInstance()
         {
             instance = new GameObject(typeof(TodoController).Name).AddComponent<TodoController>();
             instance.provider = Resources.Load<TodoProvider>(typeof(TodoProvider).Name);
@@ -35,14 +35,16 @@ namespace UHTTP.Sample.TodoModule
                         break;
                 }
             }
+
+
+            void ApplyShowAll(string json)
+            {
+                var todos = JsonConvert.DeserializeObject<List<Todo>>(json);
+                for (int i = 0; i < todos.Count; i++)
+                    Debug.Log(todos[i].ToString());
+            }
         }
 
-        private void ApplyShowAll(string json)
-        {
-            var todos = JsonConvert.DeserializeObject<List<Todo>>(json);
-            for (int i = 0; i < todos.Count; i++)
-                Debug.Log(todos[i].ToString());
-        }
 
         public void ShowById(int id)
         {
@@ -61,12 +63,12 @@ namespace UHTTP.Sample.TodoModule
                         break;
                 }
             }
-        }
 
-        private void ApplyShowById(string json)
-        {
-            var todo = JsonConvert.DeserializeObject<Todo>(json);
-            Debug.Log(todo.ToString());
+            void ApplyShowById(string json)
+            {
+                var todo = JsonConvert.DeserializeObject<Todo>(json);
+                Debug.Log(todo.ToString());
+            }
         }
     }
 }

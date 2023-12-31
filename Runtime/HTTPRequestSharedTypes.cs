@@ -1,5 +1,3 @@
-using UnityEngine.Networking;
-
 namespace UHTTP
 {
     public enum HTTPRequestMethod 

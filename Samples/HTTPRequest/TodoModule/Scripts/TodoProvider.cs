@@ -14,7 +14,8 @@ namespace UHTTP.Sample.TodoModule
         [SerializeField] private HTTPRequestCard GetTodoById; 
         public void GetById(int id, Action<UnityWebRequest> responseCallback)
         {
-            GetTodoById.SetAdditionalURL(id.ToString());
+            var req = GetTodoById.CreateRequest();
+            req.Data.SetURLAdditional(id.ToString());
             GetTodoById.Send(responseCallback);
         }
     }
