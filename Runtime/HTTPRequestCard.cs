@@ -51,10 +51,10 @@ namespace UHTTP
                 }
 
                 public HTTPRequest CreateRequest() =>
-                        new HTTPRequest(CreateRequestData());
+                        CreateRequestData().CreateRequest();
 
                 public HTTPRequest Send(Action<UnityWebRequest> callback) =>
-                        new HTTPRequest(CreateRequestData()).SetCallback(callback).Send();
+                        CreateRequest().SetCallback(callback).Send();
         }
 
         [Serializable]

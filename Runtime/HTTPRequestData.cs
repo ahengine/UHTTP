@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace UHTTP
 {
-    public class HTTPRequestData
+    public struct HTTPRequestData
     {
         // URL
         public string URLFull => URL + URLAdditional;
@@ -52,5 +52,8 @@ namespace UHTTP
             PostFormFields.Add(key,value);
         public void ClearPostFormFields() =>
             PostFormFields.Clear();
+
+        public HTTPRequest CreateRequest() =>
+            new HTTPRequest(this);
     }
 }
