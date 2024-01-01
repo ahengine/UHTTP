@@ -14,9 +14,11 @@ namespace UHTTP.Sample.TodoModule
         [SerializeField] private HTTPRequestCard GetTodoById; 
         public void GetById(int id, Action<UnityWebRequest> responseCallback)
         {
-            var req = GetTodoById.CreateRequest();
-            req.Data.SetURLAdditional(id.ToString());
-            GetTodoById.Send(responseCallback);
+            var reqData = GetTodoById.CreateRequestData();
+            reqData.SetURLAdditional(id.ToString());
+            var req = reqData.CreateRequest();
+            req.SetCallback(responseCallback);
+            req.Send();
         }
     }
 }
