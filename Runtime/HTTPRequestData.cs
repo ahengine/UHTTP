@@ -1,57 +1,81 @@
 using System.Collections.Generic;
+using UnityEngine.Networking;
 
 namespace UHTTP
 {
     public struct HTTPRequestData
     {
         // URL
-        public string URLFull => URL + URLAdditional;
-        public string URL { private set; get; }
-        public void SetURL(string URL) =>
-            this.URL = URL; 
-
-        public string URLAdditional { private set; get; } 
-        public void SetURLAdditional(string URLAdditional) =>
-            this.URLAdditional = URLAdditional;
+        public string URL { get; set; }
 
         // METHOD
-        public string Method { private set; get; }
-        public void SetMethod(string method) =>
-            Method = method;
+        public string Method { get; set; }
+
+        public void SetMethod(HTTPRequestMethod method)
+        {
+            switch (method)
+            {
+                case HTTPRequestMethod.GET:
+                    Method = UnityWebRequest.kHttpVerbGET;
+                    break;
+                case HTTPRequestMethod.POST:
+                    Method = UnityWebRequest.kHttpVerbPOST;
+                    break;
+                case HTTPRequestMethod.PUT:
+                    Method = UnityWebRequest.kHttpVerbPUT;
+                    break;
+                case HTTPRequestMethod.HEAD:
+                    Method = UnityWebRequest.kHttpVerbHEAD;
+                    break;
+                case HTTPRequestMethod.CREATE:
+                    Method = UnityWebRequest.kHttpVerbCREATE;
+                    break;
+                case HTTPRequestMethod.DELETE:
+                    Method = UnityWebRequest.kHttpVerbDELETE;
+                    break;
+                default:
+                    throw new System.ArgumentOutOfRangeException(nameof(method), $"The method is not supported.");
+            }
+        }
 
         // AUTH
-        public bool HaveAuth { private set; get; }
-        public void SetAuth(bool haveAuth) =>
-            HaveAuth = haveAuth;  
+        public bool HaveAuth { get; set; }
 
         // HEADER
-        public List<KeyValuePair<string, string>> Headers { private set; get; }
-        public void AddHeader( KeyValuePair<string, string> newHeader) =>
-            Headers.Add(newHeader);
+        private List<KeyValuePair<string, string>> m_Headers;
+        public IReadOnlyList<KeyValuePair<string, string>> Headers => m_Headers;
+
+        public void AddHeader(string name, string value) =>
+            m_Headers.Add(new KeyValuePair<string, string>(name, value));
+
         public void ClearHeaders() =>
-            Headers.Clear();
+            m_Headers.Clear();
 
 
         // --------------POST--------------
 
         // BODY JSON
-        public string BodyJson { private set; get; }
-        public void SetBodyJson(string bodyJson) =>
-            BodyJson = bodyJson;
+        public string BodyJson { get; set; }
 
         // POST FIELD
-        public Dictionary<string, string> PostFields { private set; get; }
+        private Dictionary<string, string> m_PostFields;
+        public IReadOnlyDictionary<string, string> PostFields => m_PostFields;
+
         public void AddPostField(string key, string value) =>
-            PostFields.Add(key,value);
+            m_PostFields.Add(key,value);
+
         public void ClearPostFields() =>
-            PostFields.Clear();
+            m_PostFields.Clear();
 
         // POST FORM FIELD
-        public Dictionary<string, string> PostFormFields { private set; get; }
+        private Dictionary<string, string> m_PostFormFields;
+        public IReadOnlyDictionary<string, string> PostFormFields => m_PostFormFields;
+
         public void AddPostFormField(string key, string value) =>
-            PostFormFields.Add(key,value);
+            m_PostFormFields.Add(key,value);
+
         public void ClearPostFormFields() =>
-            PostFormFields.Clear();
+            m_PostFormFields.Clear();
 
         public HTTPRequest CreateRequest() =>
             new HTTPRequest(this);

@@ -32,7 +32,7 @@ namespace UHTTP
                     return new UnityWebRequest()
                     {
                         method = Data.Method,
-                        url = Data.URLFull
+                        url = Data.URL
                     };
             }
 

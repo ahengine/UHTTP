@@ -4,7 +4,10 @@ namespace UHTTP
     { 
         GET, 
         POST, 
-        PUT 
+        PUT,
+        HEAD,
+        CREATE,
+        DELETE
     }
 
     public enum HTTPResponseCodes
