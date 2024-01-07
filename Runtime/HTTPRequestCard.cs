@@ -8,7 +8,7 @@ namespace UHTTP
         [CreateAssetMenu(fileName = "HTTPRequestCard", menuName = "Cards/HTTPRequestCard", order = 0)]
         public partial class HTTPRequestCard : ScriptableObject
         {
-                [Tooltip("Add from Base: Headers, PostFields, PostFormFields")]
+                [Tooltip("Add from Base: URL, Headers, PostFields, PostFormFields")]
                 [SerializeField] private HTTPRequestCard baseCard;
                 [SerializeField]
                 private List<KeyValueItem> headers = new List<KeyValueItem>()
