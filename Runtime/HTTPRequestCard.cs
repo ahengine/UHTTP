@@ -21,27 +21,14 @@ namespace UHTTP
                 public HTTPRequestData CreateRequestData()
                 {
                         var data = new HTTPRequestData();
-                        data.SetURL(URL);
-                        string GetMethod()
-                        {
-                                switch (Method)
-                                {
-                                        case HTTPRequestMethod.GET:
-                                        default:
-                                                return UnityWebRequest.kHttpVerbGET;
-                                        case HTTPRequestMethod.POST:
-                                                return UnityWebRequest.kHttpVerbPOST;
-                                        case HTTPRequestMethod.PUT:
-                                                return UnityWebRequest.kHttpVerbPUT;
-                                }
-                        }
-                        data.SetMethod(GetMethod());
-                        data.SetAuth(HaveAuth);
+                        data.URL = URL;
+                        data.SetMethod(Method);
+                        data.HaveAuth = HaveAuth;
 
                         // POST
-                        data.SetBodyJson(BodyJson);
+                        data.BodyJson = BodyJson;
                         for (int i = 0; i < headers.Count; i++)
-                                data.AddHeader(new KeyValuePair<string, string>(headers[i].key, headers[i].value));
+                                data.AddHeader(headers[i].key, headers[i].value);
                         for (int i = 0; i < postFields.Count; i++)
                                 data.AddPostField(postFields[i].key, postFields[i].value);
                         for (int i = 0; i < postFields.Count; i++)
