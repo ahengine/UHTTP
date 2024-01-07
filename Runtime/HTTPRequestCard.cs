@@ -8,7 +8,14 @@ namespace UHTTP
         [CreateAssetMenu(fileName = "HTTPRequestCard", menuName = "Cards/HTTPRequestCard", order = 0)]
         public partial class HTTPRequestCard : ScriptableObject
         {
-                [SerializeField] private List<KeyValueItem> headers;
+                [Tooltip("Add from Base: Headers, PostFields, PostFormFields")]
+                [SerializeField] private HTTPRequestCard baseCard;
+                [SerializeField]
+                private List<KeyValueItem> headers = new List<KeyValueItem>()
+                {
+                        new KeyValueItem() {key="Content-Type",value="application/json"},
+                        new KeyValueItem() {key="Accept",value="application/json"}
+                };
                 [field: SerializeField] public string URL { private set; get; }
                 [field: SerializeField] public HTTPRequestMethod Method { private set; get; }
                 [field: SerializeField] public bool HaveAuth { private set; get; }
@@ -46,6 +53,17 @@ namespace UHTTP
                                 data.AddPostField(postFields[i].key, postFields[i].value);
                         for (int i = 0; i < postFields.Count; i++)
                                 data.AddPostFormField(postFields[i].key, postFields[i].value);
+
+                        if (baseCard)
+                        {
+                                data.SetURL(baseCard.URL + URL);
+                                for (int i = 0; i < baseCard.headers.Count; i++)
+                                        data.AddHeader(new KeyValuePair<string, string>(baseCard.headers[i].key, baseCard.headers[i].value));
+                                for (int i = 0; i < baseCard.postFields.Count; i++)
+                                        data.AddPostField(baseCard.postFields[i].key, baseCard.postFields[i].value);
+                                for (int i = 0; i < baseCard.postFields.Count; i++)
+                                        data.AddPostFormField(baseCard.postFields[i].key, baseCard.postFields[i].value);
+                        }
 
                         return data;
                 }

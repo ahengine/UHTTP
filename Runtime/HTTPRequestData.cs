@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace UHTTP
 {
-    public struct HTTPRequestData
+    public class HTTPRequestData
     {
         // URL
         public string URLFull => URL + URLAdditional;
@@ -22,10 +22,10 @@ namespace UHTTP
         // AUTH
         public bool HaveAuth { private set; get; }
         public void SetAuth(bool haveAuth) =>
-            HaveAuth = haveAuth;  
+            HaveAuth = haveAuth;
 
         // HEADER
-        public List<KeyValuePair<string, string>> Headers { private set; get; }
+        public List<KeyValuePair<string, string>> Headers { private set; get; } = new List<KeyValuePair<string, string>>();
         public void AddHeader( KeyValuePair<string, string> newHeader) =>
             Headers.Add(newHeader);
         public void ClearHeaders() =>
@@ -40,14 +40,14 @@ namespace UHTTP
             BodyJson = bodyJson;
 
         // POST FIELD
-        public Dictionary<string, string> PostFields { private set; get; }
+        public Dictionary<string, string> PostFields { private set; get; } = new Dictionary<string, string>();
         public void AddPostField(string key, string value) =>
             PostFields.Add(key,value);
         public void ClearPostFields() =>
             PostFields.Clear();
 
         // POST FORM FIELD
-        public Dictionary<string, string> PostFormFields { private set; get; }
+        public Dictionary<string, string> PostFormFields { private set; get; } = new Dictionary<string, string>();
         public void AddPostFormField(string key, string value) =>
             PostFormFields.Add(key,value);
         public void ClearPostFormFields() =>

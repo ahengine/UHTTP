@@ -12,6 +12,8 @@ namespace UHTTP
         public HTTPRequestData Data { private set; get; }
         public Action<UnityWebRequest> callback;
 
+        public Func<UnityWebRequest, UnityWebRequest> AddOptionsRequest;
+
         public HTTPRequest() { }
         public HTTPRequest(HTTPRequestData data) =>
             Data = data;
@@ -27,16 +29,22 @@ namespace UHTTP
 
         private UnityWebRequest CreateRequest()
         {
-            UnityWebRequest Create() 
+            UnityWebRequest CreateWebRequest()
             {
-                    return new UnityWebRequest()
+                if(Data.PostFields.Count > 0)
+                    return UnityWebRequest.Post(Data.URLFull, Data.PostFields);
+                
+                if(Data.PostFormFields.Count > 0)
+                    return UnityWebRequest.Post(Data.URLFull, Data.PostFormFields);
+
+                return new UnityWebRequest()
                     {
                         method = Data.Method,
                         url = Data.URLFull
                     };
             }
 
-            UnityWebRequest request = Create();
+            UnityWebRequest request = CreateWebRequest();
             
             void AddBody()
             {
@@ -72,6 +80,10 @@ namespace UHTTP
             }
 
             SetHeaders();
+
+            if (AddOptionsRequest != null)
+                request = AddOptionsRequest(request);
+
             return request;
         }   
 
