@@ -1,6 +1,6 @@
 {
-    "name": "HTTPRequestService",
-    "rootNamespace": "",
+    "name": "UHTTP",
+    "rootNamespace": "UHTTP",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

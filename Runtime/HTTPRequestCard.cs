@@ -40,7 +40,7 @@ namespace UHTTP
                 public HTTPRequest CreateRequest() =>
                         CreateRequestData().CreateRequest();
 
-                public HTTPRequest Send(Action<UnityWebRequest> callback) =>
+                public void Send(Action<UnityWebRequest> callback) =>
                         CreateRequest().SetCallback(callback).Send();
         }
 
