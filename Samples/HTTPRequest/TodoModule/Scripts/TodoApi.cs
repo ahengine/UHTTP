@@ -1,7 +1,7 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
-using System.Threading.Tasks;
 
 namespace UHTTP.Sample.TodoModule
 {

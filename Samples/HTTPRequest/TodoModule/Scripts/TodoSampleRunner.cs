@@ -1,36 +1,48 @@
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 namespace UHTTP.Sample.TodoModule
 {
     public class TodoSampleRunner : MonoBehaviour
     {
+        [Header("Data")]
         [SerializeField] private int Id;
         [SerializeField] private HTTPRequestCard m_TodoById;
         [SerializeField] private HTTPRequestCard m_TodoAll;
 
-        private void Update() 
+        [Header("UI")]
+        [SerializeField] private Button m_GetById;
+        [SerializeField] private Button m_GetAll;
+        [SerializeField] private Button m_GetByIdAsync;
+        [SerializeField] private Button m_GetAllAsync;
+
+        private void OnEnable()
         {
-            if(Input.GetKeyDown(KeyCode.Alpha1))
-                ShowTodo(Id);
-            else if(Input.GetKeyDown(KeyCode.Alpha2))
-                ShowAllTodos();
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-                ShowTodoAsync(Id);
-            else if (Input.GetKeyDown(KeyCode.Alpha4))
-                ShowAllTodosAsync();
+            m_GetById.onClick.AddListener(ShowTodo);
+            m_GetAll.onClick.AddListener(ShowAllTodos);
+            m_GetByIdAsync.onClick.AddListener(ShowTodoAsync);
+            m_GetAllAsync.onClick.AddListener(ShowAllTodosAsync);
         }
 
-        private void ShowTodo(int id)
-            => TodoApi.GetById(m_TodoById.CreateRequestData(), id, (response) => LogTodo(response, id));
+        private void OnDisable()
+        {
+            m_GetById.onClick.RemoveListener(ShowTodo);
+            m_GetAll.onClick.RemoveListener(ShowAllTodos);
+            m_GetByIdAsync.onClick.RemoveListener(ShowTodoAsync);
+            m_GetAllAsync.onClick.RemoveListener(ShowAllTodosAsync);
+        }
+
+        private void ShowTodo()
+            => TodoApi.GetById(m_TodoById.CreateRequestData(), Id, (response) => LogTodo(response, Id));
 
         private void ShowAllTodos()
             => TodoApi.GetAll(m_TodoAll.CreateRequestData(), LogAllTodo);
 
-        private async void ShowTodoAsync(int id)
+        private async void ShowTodoAsync()
         {
-            RequestResult<Todo> response = await TodoApi.GetByIdAsync(m_TodoById.CreateRequestData(), id);
-            LogTodo(response, id);
+            RequestResult<Todo> response = await TodoApi.GetByIdAsync(m_TodoById.CreateRequestData(), Id);
+            LogTodo(response, Id);
         }
 
         private async void ShowAllTodosAsync()
