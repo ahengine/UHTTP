@@ -12,9 +12,13 @@ namespace UHTTP.Sample.TodoModule
         private void Update() 
         {
             if(Input.GetKeyDown(KeyCode.Alpha1))
-                ShowAllTodos();
-            else if(Input.GetKeyDown(KeyCode.Alpha2))
                 ShowTodo(Id);
+            else if(Input.GetKeyDown(KeyCode.Alpha2))
+                ShowAllTodos();
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+                ShowTodoAsync(Id);
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
+                ShowAllTodosAsync();
         }
 
         private void ShowTodo(int id)
@@ -22,6 +26,18 @@ namespace UHTTP.Sample.TodoModule
 
         private void ShowAllTodos()
             => TodoApi.GetAll(m_TodoAll.CreateRequestData(), LogAllTodo);
+
+        private async void ShowTodoAsync(int id)
+        {
+            RequestResult<Todo> response = await TodoApi.GetByIdAsync(m_TodoById.CreateRequestData(), id);
+            LogTodo(response, id);
+        }
+
+        private async void ShowAllTodosAsync()
+        {
+            RequestResult<Todo[]> response = await TodoApi.GetAllAsync(m_TodoById.CreateRequestData());
+            LogAllTodo(response);
+        }
 
         private void LogTodo(RequestResult<Todo> response, int id)
         {

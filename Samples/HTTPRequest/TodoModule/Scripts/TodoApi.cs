@@ -1,6 +1,7 @@
 using System;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace UHTTP.Sample.TodoModule
 {
@@ -19,6 +20,19 @@ namespace UHTTP.Sample.TodoModule
             HTTPRequest request = data.CreateRequest();
             request.SetCallback((webRequest) => onGet(GetData<Todo[]>(webRequest)));
             request.Send();
+        }
+
+        public static async Task<RequestResult<Todo>> GetByIdAsync(HTTPRequestData data, int id)
+        {
+            data.URL += id.ToString();
+            UnityWebRequest request = await data.CreateRequest().SendAsync();
+            return GetData<Todo>(request);
+        }
+
+        public static async Task<RequestResult<Todo[]>> GetAllAsync(HTTPRequestData data)
+        {
+            UnityWebRequest request = await data.CreateRequest().SendAsync();
+            return GetData<Todo[]>(request);
         }
 
         private static RequestResult<T> GetData<T>(UnityWebRequest request) where T : class
