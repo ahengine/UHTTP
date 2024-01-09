@@ -3,7 +3,7 @@ using UnityEngine.Networking;
 
 namespace UHTTP
 {
-    public struct HTTPRequestData
+    public class HTTPRequestData
     {
         // URL
         public string URL { get; set; }
@@ -42,15 +42,9 @@ namespace UHTTP
         public bool HaveAuth { get; set; }
 
         // HEADER
-        private List<KeyValuePair<string, string>> m_Headers;
-        public IReadOnlyList<KeyValuePair<string, string>> Headers => m_Headers;
+        public List<KeyValuePair<string, string>> Headers { get; } = new List<KeyValuePair<string, string>>();
 
-        public void AddHeader(string name, string value) =>
-            m_Headers.Add(new KeyValuePair<string, string>(name, value));
-
-        public void ClearHeaders() =>
-            m_Headers.Clear();
-
+        public void AddHeader(string name, string value) => Headers.Add(new KeyValuePair<string, string>(name, value));
 
         // --------------POST--------------
 
@@ -58,24 +52,10 @@ namespace UHTTP
         public string BodyJson { get; set; }
 
         // POST FIELD
-        private Dictionary<string, string> m_PostFields;
-        public IReadOnlyDictionary<string, string> PostFields => m_PostFields;
-
-        public void AddPostField(string key, string value) =>
-            m_PostFields.Add(key,value);
-
-        public void ClearPostFields() =>
-            m_PostFields.Clear();
+        public Dictionary<string, string> PostFields { get; } = new Dictionary<string, string>();
 
         // POST FORM FIELD
-        private Dictionary<string, string> m_PostFormFields;
-        public IReadOnlyDictionary<string, string> PostFormFields => m_PostFormFields;
-
-        public void AddPostFormField(string key, string value) =>
-            m_PostFormFields.Add(key,value);
-
-        public void ClearPostFormFields() =>
-            m_PostFormFields.Clear();
+        public Dictionary<string, string> PostFormFields { get; } = new Dictionary<string, string>();
 
         public HTTPRequest CreateRequest() =>
             new HTTPRequest(this);

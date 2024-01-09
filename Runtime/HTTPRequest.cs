@@ -14,6 +14,8 @@ namespace UHTTP
         public UnityWebRequest WebRequest { get; private set; }
         public Action<UnityWebRequest> callback;
 
+        public Func<UnityWebRequest, UnityWebRequest> AddOptionsRequest;
+
         public HTTPRequest() { }
         public HTTPRequest(HTTPRequestData data) =>
             Data = data;
@@ -29,17 +31,23 @@ namespace UHTTP
 
         private UnityWebRequest CreateRequest()
         {
-            UnityWebRequest Create()
+            UnityWebRequest CreateWebRequest()
             {
+                if(Data.PostFields.Count > 0)
+                    return UnityWebRequest.Post(Data.URL, Data.PostFields);
+                
+                if(Data.PostFormFields.Count > 0)
+                    return UnityWebRequest.Post(Data.URL, Data.PostFormFields);
+
                 return new UnityWebRequest()
-                {
-                    method = Data.Method,
-                    url = Data.URL
-                };
+                    {
+                        method = Data.Method,
+                        url = Data.URL
+                    };
             }
 
-            UnityWebRequest request = Create();
-
+            UnityWebRequest request = CreateWebRequest();
+            
             void AddBody()
             {
                 byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(Data.BodyJson);
@@ -74,6 +82,10 @@ namespace UHTTP
             }
 
             SetHeaders();
+
+            if (AddOptionsRequest != null)
+                request = AddOptionsRequest(request);
+
             return request;
         }
 
@@ -110,7 +122,6 @@ namespace UHTTP
 
                 callback(request);
             }
-
 
             request.downloadHandler = new DownloadHandlerBuffer();
             yield return request.SendWebRequest();
