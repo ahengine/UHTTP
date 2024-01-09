@@ -1,7 +1,9 @@
 {
-    "name": "UHTTP",
-    "rootNamespace": "UHTTP",
-    "references": [],
+    "name": "UHTTP.Sample.TodoModule",
+    "rootNamespace": "UHTTP.Sample.TodoModule",
+    "references": [
+        "GUID:db837764b32cef843986f1f611489c42"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
