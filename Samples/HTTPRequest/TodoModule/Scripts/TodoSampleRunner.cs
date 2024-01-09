@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -7,34 +6,54 @@ namespace UHTTP.Sample.TodoModule
     public class TodoSampleRunner : MonoBehaviour
     {
         [SerializeField] private int Id;
-        [SerializeField] private string GetURLSample = "https://jsonplaceholder.typicode.com/todos/11";
+        [SerializeField] private HTTPRequestCard m_TodoById;
+        [SerializeField] private HTTPRequestCard m_TodoAll;
 
         private void Update() 
         {
             if(Input.GetKeyDown(KeyCode.Alpha1))
-                TodoController.Instance.ShowAll();
-
-            if(Input.GetKeyDown(KeyCode.Alpha2))
-                TodoController.Instance.ShowById(Id);
-            
-            if(Input.GetKeyDown(KeyCode.Alpha0))
-                Get();
+                ShowAllTodos();
+            else if(Input.GetKeyDown(KeyCode.Alpha2))
+                ShowTodo(Id);
         }
 
-        private void Get() =>
-            StartCoroutine(GetCoroutine());
-        private IEnumerator GetCoroutine() 
-        {
-            UnityWebRequest req = new UnityWebRequest()
-                    {
-                        method = HTTPRequestMethod.GET.ToString(),
-                        url = GetURLSample
-                    };
+        private void ShowTodo(int id)
+            => TodoApi.GetById(m_TodoById.CreateRequestData(), id, (response) => LogTodo(response, id));
 
-            
-            
-            yield return req.SendWebRequest();
-            Debug.Log(req.downloadHandler.text);
+        private void ShowAllTodos()
+            => TodoApi.GetAll(m_TodoAll.CreateRequestData(), LogAllTodo);
+
+        private void LogTodo(RequestResult<Todo> response, int id)
+        {
+            if (TryLogError(response.Request, $"Get Todo by id {id}"))
+                return;
+
+            Debug.Log(response.Data.ToString());
+        }
+
+        private void LogAllTodo(RequestResult<Todo[]> response)
+        {
+            if (TryLogError(response.Request, $"Get All Todos"))
+                return;
+
+            foreach(Todo todo in response.Data)
+                Debug.Log(todo.ToString());
+        }
+
+        private bool TryLogError(UnityWebRequest request, string requestName)
+        {
+            switch (request.result)
+            {
+                case UnityWebRequest.Result.ProtocolError:
+                    Debug.Log($"{requestName} failed. Http code: {request.responseCode}.");
+                    return true;
+                case UnityWebRequest.Result.ConnectionError:
+                case UnityWebRequest.Result.DataProcessingError:
+                    Debug.Log($"{requestName} failed. Error: {request.error}");
+                    return true;
+            }
+
+            return false;
         }
     }
 }
