@@ -7,10 +7,13 @@ namespace UHTTP.Helpers
         /// </summary>
         public static string Join(string url, string additionalUrl)
         {
-            string slash = url[url.Length - 1] == '/' ? string.Empty :
-                additionalUrl[0] == '/' ? string.Empty : "/";
+            if (url[url.Length - 1] == '/')
+                url = url.Remove(url.Length - 1);
 
-            return $"{url}{slash}{additionalUrl}";
+            if (additionalUrl[0] == '/')
+                additionalUrl = additionalUrl.Substring(1);
+
+            return $"{url}/{additionalUrl}";
         }
     }
 }
