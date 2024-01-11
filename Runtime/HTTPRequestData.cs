@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UHTTP.Helpers;
 using UnityEngine.Networking;
 
 namespace UHTTP
@@ -8,13 +9,7 @@ namespace UHTTP
         // URL
         public string URL { get; set; }
 
-        public void AppendUrl(string additionalUrl)
-        {
-            string slash = URL[URL.Length - 1] == '/' ? string.Empty :
-                additionalUrl[0] == '/' ? string.Empty : "/";
-
-            URL = $"{URL}{slash}{additionalUrl}";
-        }
+        public void AppendUrl(string additionalUrl) => URL = UrlUtility.Join(URL, additionalUrl);
 
         // METHOD
         public string Method { get; set; }
