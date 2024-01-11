@@ -8,6 +8,14 @@ namespace UHTTP
         // URL
         public string URL { get; set; }
 
+        public void AppendUrl(string additionalUrl)
+        {
+            string slash = URL[URL.Length - 1] == '/' ? string.Empty :
+                additionalUrl[0] == '/' ? string.Empty : "/";
+
+            URL = $"{URL}{slash}{additionalUrl}";
+        }
+
         // METHOD
         public string Method { get; set; }
 
