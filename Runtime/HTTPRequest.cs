@@ -26,7 +26,7 @@ namespace UHTTP
             return this;
         }
            
-        public void SetCard(HTTPRequestData data) =>
+        public void SetData(HTTPRequestData data) =>
             Data = data;
 
         private UnityWebRequest CreateRequest()
@@ -113,14 +113,7 @@ namespace UHTTP
                 }
 
                 JWTResolver.RemoveAccessToken();
-
-                if (Data.HaveAuth)
-                {
-                    JWTResolver.ResolveAccessToken(() => Send());
-                    return;
-                }
-
-                callback(request);
+                JWTResolver.ResolveAccessToken(() => callback(request), Send);
             }
 
             request.downloadHandler = new DownloadHandlerBuffer();
