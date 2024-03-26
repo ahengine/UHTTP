@@ -11,19 +11,15 @@ namespace UHTTP
         [Tooltip("Add from Base: URL, Headers, PostFields, PostFormFields")]
         [SerializeField] private HTTPRequestCard baseCard;
         [SerializeField]
-        private List<KeyValueItem> headers = new List<KeyValueItem>()
-                {
-                        new KeyValueItem() {key="Content-Type",value="application/json"},
-                        new KeyValueItem() {key="Accept",value="application/json"}
-                };
+        private HTTPRequestParamsCard headers;
         [field: SerializeField] public string URL { private set; get; }
         [field: SerializeField] public HTTPRequestMethod Method { private set; get; }
         [field: SerializeField] public bool HaveAuth { private set; get; }
 
         // POST
         [field: SerializeField] public string BodyJson { private set; get; }
-        [SerializeField] private List<KeyValueItem> postFields;
-        [SerializeField] private List<KeyValueItem> postFormFields;
+        [SerializeField] private HTTPRequestParamsCard postFields;
+        [SerializeField] private HTTPRequestParamsCard postFormFields;
 
         public HTTPRequestData CreateRequestData()
         {
@@ -34,22 +30,22 @@ namespace UHTTP
 
             // POST
             data.BodyJson = BodyJson;
-            for (int i = 0; i < headers.Count; i++)
-                data.AddHeader(headers[i].key, headers[i].value);
-            for (int i = 0; i < postFields.Count; i++)
-                data.PostFields.Add(postFields[i].key, postFields[i].value);
-            for (int i = 0; i < postFields.Count; i++)
-                data.PostFormFields.Add(postFields[i].key, postFields[i].value);
+            for (int i = 0; i < headers.Parameters.Count; i++)
+                data.AddHeader(headers.Parameters[i].key, headers.Parameters[i].value);
+            for (int i = 0; i < postFields.Parameters.Count; i++)
+                data.PostFields.Add(postFields.Parameters[i].key, postFields.Parameters[i].value);
+            for (int i = 0; i < postFields.Parameters.Count; i++)
+                data.PostFormFields.Add(postFields.Parameters[i].key, postFields.Parameters[i].value);
 
             if (baseCard)
             {
                 data.URL = baseCard.URL + URL;
-                for (int i = 0; i < baseCard.headers.Count; i++)
-                    data.AddHeader(baseCard.headers[i].key, baseCard.headers[i].value);
-                for (int i = 0; i < baseCard.postFields.Count; i++)
-                    data.PostFields.Add(baseCard.postFields[i].key, baseCard.postFields[i].value);
-                for (int i = 0; i < baseCard.postFields.Count; i++)
-                    data.PostFormFields.Add(baseCard.postFields[i].key, baseCard.postFields[i].value);
+                for (int i = 0; i < baseCard.headers.Parameters.Count; i++)
+                    data.AddHeader(baseCard.headers.Parameters[i].key, baseCard.headers.Parameters[i].value);
+                for (int i = 0; i < baseCard.postFields.Parameters.Count; i++)
+                    data.PostFields.Add(baseCard.postFields.Parameters[i].key, baseCard.postFields.Parameters[i].value);
+                for (int i = 0; i < baseCard.postFields.Parameters.Count; i++)
+                    data.PostFormFields.Add(baseCard.postFields.Parameters[i].key, baseCard.postFields.Parameters[i].value);
             }
 
             return data;
@@ -60,12 +56,5 @@ namespace UHTTP
 
         public void Send(Action<UnityWebRequest> callback) =>
                 CreateRequest().SetCallback(callback).Send();
-    }
-
-    [Serializable]
-    public class KeyValueItem
-    {
-        public string key;
-        public string value;
     }
 }
