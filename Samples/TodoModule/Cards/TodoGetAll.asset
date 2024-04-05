@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5cf1889433062440a9819a0016fc884, type: 3}
   m_Name: TodoGetAll
   m_EditorClassIdentifier: 
-  headers: []
+  baseCard: {fileID: 0}
+  headers: {fileID: 11400000, guid: c5deb3e58ad85b4419deb8af2a1641b1, type: 2}
   <URL>k__BackingField: https://jsonplaceholder.typicode.com/todos
   <Method>k__BackingField: 0
   <HaveAuth>k__BackingField: 0
   <BodyJson>k__BackingField: 
-  postFields: []
-  postFormFields: []
+  postFields: {fileID: 11400000, guid: c5deb3e58ad85b4419deb8af2a1641b1, type: 2}
+  postFormFields: {fileID: 11400000, guid: c5deb3e58ad85b4419deb8af2a1641b1, type: 2}
