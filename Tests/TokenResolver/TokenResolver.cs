@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using static UHTTP.JWTTokenResolver;
 
 namespace UHTTP.Helpers
 {
@@ -8,22 +9,19 @@ namespace UHTTP.Helpers
     {
         [SerializeField, TextArea] private string accessToken;
         [SerializeField, TextArea] private string refreshToken;
-        [SerializeField] private HTTPRequestCard refreshReqest;
 
         [ContextMenu("Resolve Token")]
         private void ResolveToken()
         {
-            JWTTokenResolver.SetAccessToken(accessToken);
+            SetAccessToken(accessToken);
             Debug.Log("Access Token Updated \n" + accessToken);
         }
 
         [ContextMenu("Resolve Refresh Token")]
         private void ResolveRefreshToken()
-        { 
-            JWTTokenResolver.SetRefreshTokenData(refreshToken, refreshReqest.CreateRequestData(), SetAccessToken); 
+        {
+            SetRefreshToken(refreshToken);
             Debug.Log("Refresh Token Updated \n" + refreshToken);
         }
-
-        private void SetAccessToken(string responseText) => JWTTokenResolver.SetAccessToken(responseText);
     }
 }

@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.Collections.Generic;
 
 namespace UHTTP
 {
@@ -23,15 +23,18 @@ namespace UHTTP
 
         public HTTPRequestData CreateRequestData()
         {
-            var data = new HTTPRequestData();
-            data.URL = URL;
+            var data = new HTTPRequestData()
+            {
+                URL=URL,
+                HaveAuth = HaveAuth,
+            };
+
             data.SetMethod(Method);
-            data.HaveAuth = HaveAuth;
 
             // POST
             data.BodyJson = BodyJson;
             for (int i = 0; i < headers.Parameters.Count; i++)
-                data.AddHeader(headers.Parameters[i].key, headers.Parameters[i].value);
+                data.Headers.Add(new KeyValuePair<string, string>(headers.Parameters[i].key, headers.Parameters[i].value));
             for (int i = 0; i < postFields.Parameters.Count; i++)
                 data.PostFields.Add(postFields.Parameters[i].key, postFields.Parameters[i].value);
             for (int i = 0; i < postFields.Parameters.Count; i++)
@@ -41,7 +44,7 @@ namespace UHTTP
             {
                 data.URL = baseCard.URL + URL;
                 for (int i = 0; i < baseCard.headers.Parameters.Count; i++)
-                    data.AddHeader(baseCard.headers.Parameters[i].key, baseCard.headers.Parameters[i].value);
+                    data.Headers.Add(new KeyValuePair<string, string>(baseCard.headers.Parameters[i].key, baseCard.headers.Parameters[i].value));
                 for (int i = 0; i < baseCard.postFields.Parameters.Count; i++)
                     data.PostFields.Add(baseCard.postFields.Parameters[i].key, baseCard.postFields.Parameters[i].value);
                 for (int i = 0; i < baseCard.postFields.Parameters.Count; i++)
@@ -51,10 +54,10 @@ namespace UHTTP
             return data;
         }
 
-        public HTTPRequest CreateRequest() =>
-                CreateRequestData().CreateRequest();
+        public HTTPRequest CreateRequest(Action<UnityWebRequest> callback) =>
+                CreateRequestData().CreateRequest(callback);
 
         public void Send(Action<UnityWebRequest> callback) =>
-                CreateRequest().SetCallback(callback).Send();
+                CreateRequest(callback).Send();
     }
 }

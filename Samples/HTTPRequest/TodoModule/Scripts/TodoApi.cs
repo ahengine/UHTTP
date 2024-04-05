@@ -10,28 +10,26 @@ namespace UHTTP.Sample.TodoModule
         public static void GetById(HTTPRequestData data, int id, Action<RequestResult<Todo>> onGet)
         {
             data.URL += id.ToString();
-            HTTPRequest request = data.CreateRequest();
-            request.SetCallback((webRequest) => onGet(GetData<Todo>(webRequest)));
+            HTTPRequest request = data.CreateRequest((req) => onGet(GetData<Todo>(req)));
             request.Send();
         }
 
         public static void GetAll(HTTPRequestData data, Action<RequestResult<Todo[]>> onGet)
         {
-            HTTPRequest request = data.CreateRequest();
-            request.SetCallback((webRequest) => onGet(GetData<Todo[]>(webRequest)));
+            HTTPRequest request = data.CreateRequest((req) => onGet(GetData<Todo[]>(req)));
             request.Send();
         }
 
         public static async Task<RequestResult<Todo>> GetByIdAsync(HTTPRequestData data, int id)
         {
             data.URL += id.ToString();
-            UnityWebRequest request = await data.CreateRequest().SendAsync();
+            UnityWebRequest request = await data.CreateRequest(null).SendAsync();
             return GetData<Todo>(request);
         }
 
         public static async Task<RequestResult<Todo[]>> GetAllAsync(HTTPRequestData data)
         {
-            UnityWebRequest request = await data.CreateRequest().SendAsync();
+            UnityWebRequest request = await data.CreateRequest(null).SendAsync();
             return GetData<Todo[]>(request);
         }
 

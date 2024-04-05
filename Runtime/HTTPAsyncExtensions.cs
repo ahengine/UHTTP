@@ -26,7 +26,7 @@ namespace UHTTP
         {
             TaskCompletionSource<UnityWebRequest> source = new TaskCompletionSource<UnityWebRequest>();
 
-            request.SetCallback((webRequest) => FinishTask(source, webRequest));
+            request.callback = (webRequest) => FinishTask(source, webRequest);
             request.Send();
 
             if(cancellation != CancellationToken.None)
@@ -46,7 +46,7 @@ namespace UHTTP
 
             if (cancellation.IsCancellationRequested)
             {
-                request.WebRequest.Abort();
+                request.webRequest.Abort();
                 source.TrySetCanceled(cancellation);
             }
         }

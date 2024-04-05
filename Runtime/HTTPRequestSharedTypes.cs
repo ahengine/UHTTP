@@ -1,14 +1,6 @@
 namespace UHTTP
 {
-    public enum HTTPRequestMethod 
-    { 
-        GET, 
-        POST, 
-        PUT,
-        HEAD,
-        CREATE,
-        DELETE
-    }
+    public enum HTTPRequestMethod { GET,POST,PUT,HEAD,CREATE,DELETE }
 
     public enum HTTPResponseCodes
     {

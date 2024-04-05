@@ -1,19 +1,20 @@
+using System;
 using System.Collections.Generic;
-using UHTTP.Helpers;
 using UnityEngine.Networking;
 
 namespace UHTTP
 {
     public class HTTPRequestData
     {
-        // URL
-        public string URL { get; set; }
+        public bool HaveAuth;
 
-        public void AppendUrl(string additionalUrl) => URL = UrlUtility.Join(URL, additionalUrl);
+        // URL
+        public string URL;
+        public void AppendUrl(string additionalUrl) => 
+            URL = URL + additionalUrl;
 
         // METHOD
-        public string Method { get; set; }
-
+        public string Method;
         public void SetMethod(HTTPRequestMethod method)
         {
             switch (method)
@@ -37,30 +38,22 @@ namespace UHTTP
                     Method = UnityWebRequest.kHttpVerbDELETE;
                     break;
                 default:
-                    throw new System.ArgumentOutOfRangeException(nameof(method), $"The method is not supported.");
+                    throw new ArgumentOutOfRangeException(nameof(method), $"The method is not supported.");
             }
         }
 
-        // AUTH
-        public bool HaveAuth { get; set; }
-
-        // HEADER
-        public List<KeyValuePair<string, string>> Headers { get; } = new List<KeyValuePair<string, string>>();
-
-        public void AddHeader(string name, string value) => Headers.Add(new KeyValuePair<string, string>(name, value));
+        public List<KeyValuePair<string, string>> Headers = 
+            new List<KeyValuePair<string, string>>();
 
         // --------------POST--------------
 
-        // BODY JSON
-        public string BodyJson { get; set; }
+        public string BodyJson;
+        public Dictionary<string, string> PostFields = 
+            new Dictionary<string, string>();
+        public Dictionary<string, string> PostFormFields = 
+            new Dictionary<string, string>();
 
-        // POST FIELD
-        public Dictionary<string, string> PostFields { get; } = new Dictionary<string, string>();
-
-        // POST FORM FIELD
-        public Dictionary<string, string> PostFormFields { get; } = new Dictionary<string, string>();
-
-        public HTTPRequest CreateRequest() =>
-            new HTTPRequest(this);
+        public HTTPRequest CreateRequest(Action<UnityWebRequest> callback) =>
+            new HTTPRequest(this,callback);
     }
 }

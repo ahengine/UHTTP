@@ -1,48 +1,42 @@
+using System.Collections;
 using System;
 using System.Collections.Generic;
-using UnityEngine.Networking;
-using JWTResolver = UHTTP.JWTTokenResolver;
-using static UHTTP.HTTPRequestCoroutineRunner;
-using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
+using static UHTTP.JWTTokenResolver;
+using static UHTTP.HTTPRequestCoroutineRunner;
+
 
 namespace UHTTP
 {
     public class HTTPRequest
     {
-        public HTTPRequestData Data { get; private set; }
-        public UnityWebRequest WebRequest { get; private set; }
+        public HTTPRequestData data;
         public Action<UnityWebRequest> callback;
+        public UnityWebRequest webRequest;
 
         public Func<UnityWebRequest, UnityWebRequest> AddOptionsRequest;
 
-        public HTTPRequest() { }
-        public HTTPRequest(HTTPRequestData data) =>
-            Data = data;
-
-        public HTTPRequest SetCallback(Action<UnityWebRequest> callback) 
+        public HTTPRequest(HTTPRequestData data,Action<UnityWebRequest> callback) 
         {
+            this.data = data;
             this.callback = callback;
-            return this;
         }
-           
-        public void SetData(HTTPRequestData data) =>
-            Data = data;
 
         private UnityWebRequest CreateRequest()
         {
             UnityWebRequest CreateWebRequest()
             {
-                if(Data.PostFields.Count > 0)
-                    return UnityWebRequest.Post(Data.URL, Data.PostFields);
+                if(data.PostFields.Count > 0)
+                    return UnityWebRequest.Post(data.URL, data.PostFields);
                 
-                if(Data.PostFormFields.Count > 0)
-                    return UnityWebRequest.Post(Data.URL, Data.PostFormFields);
+                if(data.PostFormFields.Count > 0)
+                    return UnityWebRequest.Post(data.URL, data.PostFormFields);
 
                 return new UnityWebRequest()
                     {
-                        method = Data.Method,
-                        url = Data.URL
+                        method = data.Method,
+                        url = data.URL
                     };
             }
 
@@ -50,34 +44,28 @@ namespace UHTTP
             
             void AddBody()
             {
-                byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(Data.BodyJson);
+                byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(data.BodyJson);
                 request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             }
 
             // Add Body
-            if (!string.IsNullOrEmpty(Data.BodyJson))
+            if (!string.IsNullOrEmpty(data.BodyJson))
                 AddBody();
 
             void SetHeaders()
             {
-                List<KeyValuePair<string, string>> totalHeaders = new List<KeyValuePair<string, string>>();
+                List<KeyValuePair<string, string>> headers = new List<KeyValuePair<string, string>>();
 
-                if (Data.Headers != null)
-                    totalHeaders.AddRange(Data.Headers);
-
-                // Add Defaults
-                totalHeaders.AddRange(new KeyValuePair<string, string>[]  {
-                    new KeyValuePair<string, string>("Content-Type", "application/json"),
-                    new KeyValuePair<string, string>("Accept", "application/json")
-                });
+                if (data.Headers != null)
+                    headers.AddRange(data.Headers);
 
                 // Add JWT
-                if (Data.HaveAuth && !string.IsNullOrEmpty(JWTResolver.AccessToken))
-                    totalHeaders.Add(JWTResolver.AccessTokenHeader);
+                if (data.HaveAuth && !string.IsNullOrEmpty(AccessToken))
+                    headers.Add(AccessTokenHeader);
 
                 // Set
-                if (totalHeaders != null && totalHeaders.Count > 0)
-                    foreach (var header in totalHeaders)
+                if (headers != null && headers.Count > 0)
+                    foreach (var header in headers)
                         request.SetRequestHeader(header.Key, header.Value);
             }
 
@@ -91,37 +79,44 @@ namespace UHTTP
 
         public void Send() 
         {
-            WebRequest = CreateRequest();
-            Run(SendRoutine(WebRequest));
+            webRequest = CreateRequest();
+            Run(SendCoroutine(webRequest));
         }
 
         public Coroutine SendCoroutine()
         {
-            WebRequest = CreateRequest();
-            return Run(SendRoutine(WebRequest));
+            webRequest = CreateRequest();
+            return Run(SendCoroutine(webRequest));
         }
 
-        private IEnumerator SendRoutine(UnityWebRequest request)
+        private IEnumerator SendCoroutine(UnityWebRequest request)
         {
-            void ReviewToken(UnityWebRequest request)
+            bool DoRenewToken()
             {
-                if (request.responseCode != (int)HTTPResponseCodes.UNAUTHORIZED_401 &&
-                    request.responseCode != (int)HTTPResponseCodes.FORBIDEN_403)
+                bool CanRenewToken() 
                 {
-                    callback(request);
-                    return;
+                    bool FailedAuthorize = 
+                        request.responseCode == (int)HTTPResponseCodes.UNAUTHORIZED_401 || request.responseCode == (int)HTTPResponseCodes.FORBIDEN_403;
+
+                    return data.HaveAuth && FailedAuthorize && TokenExpiredSterategy != null;
                 }
 
-                JWTResolver.RemoveAccessToken();
-                JWTResolver.ResolveAccessToken(() => callback(request), Send);
+                if (CanRenewToken())
+                {
+                    RemoveAccessToken();
+                    TokenExpiredSterategy.Invoke(Send);
+                    return true;
+                }
+
+                return false;
             }
 
             request.downloadHandler = new DownloadHandlerBuffer();
             yield return request.SendWebRequest();
-            if (Data.HaveAuth)
-                ReviewToken(request);
-            else
+
+            if (!DoRenewToken())
                 callback?.Invoke(request);
+
             request.Dispose();
         }
     }

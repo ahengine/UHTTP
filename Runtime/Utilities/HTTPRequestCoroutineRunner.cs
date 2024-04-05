@@ -13,5 +13,8 @@ namespace UHTTP
 
         public static Coroutine Run(IEnumerator enumerator) =>
             Instance.StartCoroutine(enumerator);
+
+        public static void Stop(Coroutine coroutine) =>
+            Instance.StopCoroutine(coroutine);
     }
 }
