@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace UHTTP
 {
-    public class HTTPRequestData
+    public record HTTPRequestData
     {
         public bool HaveAuth;
 
@@ -55,5 +56,11 @@ namespace UHTTP
 
         public HTTPRequest CreateRequest(Action<UnityWebRequest> callback) =>
             new HTTPRequest(this,callback);
+    
+        public void ToJson()
+        {
+            string json = JsonUtility.ToJson(this);
+            Debug.Log(json);
+        }
     }
 }

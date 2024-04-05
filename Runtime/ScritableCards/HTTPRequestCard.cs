@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections.Generic;
+using System.Net.Cache;
 
 namespace UHTTP
 {
@@ -33,22 +34,34 @@ namespace UHTTP
 
             // POST
             data.BodyJson = BodyJson;
-            for (int i = 0; i < headers.Parameters.Count; i++)
-                data.Headers.Add(new KeyValuePair<string, string>(headers.Parameters[i].key, headers.Parameters[i].value));
-            for (int i = 0; i < postFields.Parameters.Count; i++)
-                data.PostFields.Add(postFields.Parameters[i].key, postFields.Parameters[i].value);
-            for (int i = 0; i < postFields.Parameters.Count; i++)
-                data.PostFormFields.Add(postFields.Parameters[i].key, postFields.Parameters[i].value);
+
+            if(headers)
+                for (int i = 0; i < headers.Parameters.Count; i++)
+                    data.Headers.Add(new KeyValuePair<string, string>(headers.Parameters[i].key, headers.Parameters[i].value));
+            
+            if(postFields)
+                for (int i = 0; i < postFields.Parameters.Count; i++)
+                    data.PostFields.Add(postFields.Parameters[i].key, postFields.Parameters[i].value);
+            
+            if(postFormFields)
+                for (int i = 0; i < postFormFields.Parameters.Count; i++)
+                    data.PostFormFields.Add(postFormFields.Parameters[i].key, postFormFields.Parameters[i].value);
 
             if (baseCard)
             {
                 data.URL = baseCard.URL + URL;
-                for (int i = 0; i < baseCard.headers.Parameters.Count; i++)
-                    data.Headers.Add(new KeyValuePair<string, string>(baseCard.headers.Parameters[i].key, baseCard.headers.Parameters[i].value));
-                for (int i = 0; i < baseCard.postFields.Parameters.Count; i++)
-                    data.PostFields.Add(baseCard.postFields.Parameters[i].key, baseCard.postFields.Parameters[i].value);
-                for (int i = 0; i < baseCard.postFields.Parameters.Count; i++)
-                    data.PostFormFields.Add(baseCard.postFields.Parameters[i].key, baseCard.postFields.Parameters[i].value);
+
+                if(headers)
+                    for (int i = 0; i < baseCard.headers.Parameters.Count; i++)
+                        data.Headers.Add(new KeyValuePair<string, string>(baseCard.headers.Parameters[i].key, baseCard.headers.Parameters[i].value));
+               
+                if(postFields)
+                    for (int i = 0; i < baseCard.postFields.Parameters.Count; i++)
+                        data.PostFields.Add(baseCard.postFields.Parameters[i].key, baseCard.postFields.Parameters[i].value);
+                
+                if(postFormFields)
+                    for (int i = 0; i < baseCard.postFormFields.Parameters.Count; i++)
+                        data.PostFormFields.Add(baseCard.postFormFields.Parameters[i].key, baseCard.postFormFields.Parameters[i].value);
             }
 
             return data;
