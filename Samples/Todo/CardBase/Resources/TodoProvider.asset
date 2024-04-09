@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a565f83b15f28ab4b974e6d8a01d9199, type: 3}
   m_Name: TodoProvider
   m_EditorClassIdentifier: 
-  getAll: {fileID: 0}
-  getById: {fileID: 0}
+  getAll: {fileID: 11400000, guid: eb962abdd7087bb47929143b681bc87a, type: 2}
+  getById: {fileID: 11400000, guid: b9d8beb762ac85d4aa1ec9976c396dc6, type: 2}
