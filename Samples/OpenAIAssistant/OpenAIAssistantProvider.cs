@@ -7,6 +7,8 @@ namespace UHTTP.Sample.OpenAIAssistant
 {
     public static class OpenAIAssistantProvider
     {
+        // Based On AI Assistant Open AI Doc: https://platform.openai.com/docs/assistants/overview?context=without-streaming&lang=curl
+
         private const string baseURL = "https://api.openai.com/v1/";
 
         private const string ACCESS_TOKEN = "OPEN-AI-KEY";
