@@ -7,7 +7,7 @@ using System.Net.Cache;
 namespace UHTTP
 {
     [CreateAssetMenu(fileName = "HTTPRequestCard", menuName = "Cards/HTTPRequestCard", order = 0)]
-    public partial class HTTPRequestCard : ScriptableObject
+    public class HTTPRequestCard : ScriptableObject
     {
         [Tooltip("Add from Base: URL, Headers, PostFields, PostFormFields")]
         [SerializeField] private HTTPRequestCard baseCard;

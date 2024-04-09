@@ -5,7 +5,7 @@ using UnityEngine;
 namespace UHTTP
 {
     [CreateAssetMenu(fileName = "HTTPRequestParamsCard", menuName = "Cards/HTTPRequestParamsCard", order = 0)]
-    public partial class HTTPRequestParamsCard : ScriptableObject
+    public class HTTPRequestParamsCard : ScriptableObject
     {
         [field: SerializeField] public List<KeyValueItem> Parameters { private set; get; }
 
