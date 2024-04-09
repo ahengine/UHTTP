@@ -104,7 +104,7 @@ namespace UHTTP
                 if (CanRenewToken())
                 {
                     RemoveAccessToken();
-                    TokenExpiredSterategy.Invoke(Send);
+                    TokenExpiredSterategy.Invoke(Send,()=> callback?.Invoke(request));
                     return true;
                 }
 

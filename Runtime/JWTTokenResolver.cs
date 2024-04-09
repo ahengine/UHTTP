@@ -10,9 +10,9 @@ namespace UHTTP
         private const string ACCESS_TOKEN_KEY = "JWT_ACCESS_TOKEN";
         private const string REFRESH_TOKEN_KEY = "JWT_REFRESH_TOKEN";
 
-        public static Action<Action> TokenExpiredSterategy { private set; get; }
+        public static Action<Action,Action> TokenExpiredSterategy { private set; get; }
 
-        public static void SetTokenExpiredSterategy(Action<Action> strategy) =>
+        public static void SetTokenExpiredSterategy(Action<Action,Action> strategy) =>
             TokenExpiredSterategy = strategy;
 
         public static string AccessToken =>

@@ -10,7 +10,7 @@ namespace UHTTP.Sample
         private static void Initialize() =>
             SetTokenExpiredSterategy(Strategy);
 
-        public static void Strategy(Action requestCallback)
+        public static void Strategy(Action resendRequest,Action requestCallback)
         {
 
             // If you don't have refresh token, finish the request.
