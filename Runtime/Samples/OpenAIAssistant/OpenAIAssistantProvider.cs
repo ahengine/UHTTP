@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
-using UHTTP;
 
-namespace UHTTP_Sample.OpenAIAssistant
+namespace UHTTP.Sample.OpenAIAssistant
 {
     public static class OpenAIAssistantProvider
     {

@@ -3,9 +3,8 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
-using UHTTP;
 
-namespace UHTTP_Sample.OpenAIAssistant.ChatBot
+namespace UHTTP.Sample.OpenAIAssistant.ChatBot
 {
     public class ChatBotOpenAI
     {

@@ -1,8 +1,7 @@
 using Newtonsoft.Json;
 using UnityEngine;
-using UHTTP;
 
-namespace UHTTP_Sample.OpenAIAssistant.ChatBot
+namespace UHTTP.Sample.OpenAIAssistant.ChatBot
 {
     [System.Serializable]
     public partial class Messages

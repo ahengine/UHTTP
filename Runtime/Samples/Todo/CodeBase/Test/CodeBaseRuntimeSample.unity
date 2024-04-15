@@ -247,9 +247,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   message: hi how are you?
   config:
-    token: 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
+    token: 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
     assistantId: asst_kVb46cTjMWOEuVNhpsVCxOeE
-    delayGetMessage: 7
+    threadId: 
+    delayGetMessage: 2
+    logInEditor: 1
 --- !u!4 &1280146323
 Transform:
   m_ObjectHideFlags: 0

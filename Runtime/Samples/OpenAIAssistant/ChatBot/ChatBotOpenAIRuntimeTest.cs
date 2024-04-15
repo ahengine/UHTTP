@@ -1,7 +1,6 @@
 using UnityEngine;
-using UHTTP;
 
-namespace UHTTP_Sample.OpenAIAssistant.ChatBot
+namespace UHTTP.Sample.OpenAIAssistant.ChatBot
 {
     public class ChatBotOpenAIRuntimeTest : MonoBehaviour
     {

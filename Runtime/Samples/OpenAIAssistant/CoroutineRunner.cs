@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UHTTP;
 
-namespace UHTTP_Sample.OpenAIAssistant
+namespace UHTTP.Sample.OpenAIAssistant
 {
     public class CoroutineRunner : MonoBehaviour
     {

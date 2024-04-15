@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace UHTTP_Sample.OpenAIAssistant.ChatBot
+namespace UHTTP.Sample.OpenAIAssistant.ChatBot
 {
     [System.Serializable]
     public record CreateThread

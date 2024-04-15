@@ -1,4 +1,5 @@
-namespace UHTTP_Sample.OpenAIAssistant
+
+namespace UHTTP.Sample.OpenAIAssistant
 {
     [System.Serializable]
     public record AddAssistantToThreadDTO
