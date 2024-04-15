@@ -4,82 +4,85 @@ using UnityEngine.Networking;
 
 namespace UHTTP.Sample.OpenAIAssistant
 {
-    public class ChatBotOpenAI : MonoBehaviour
+    public class ChatBotOpenAI
     {
-        [SerializeField] private float getMessagesAfterSendMessageDelay = 2;
-        [SerializeField,TextArea] private string message;
+        private ChatBotConfig config;
+        private string threadId;
 
-        [Header("Settings")]
-        [SerializeField] private string token;
-        [SerializeField] private string threadId;
-        [SerializeField] private string assistantId;
-        [SerializeField] private string instructionAssistant;
-
-        private void Awake() 
+        // Config
+        public ChatBotOpenAI(ChatBotConfig config) 
         {
-            OpenAIAssistantProvider.Initialize(token);
+            this.config = config;
+            OpenAIAssistantProvider.Initialize(this.config.token);
             CreateThread();
         }
-
-        [ContextMenu("Create Thread")]
-        public void CreateThread()
+        private void CreateThread()
         {
             void SendRequest() =>
                 OpenAIAssistantProvider.CreateThread(Response);
 
             SendRequest();
+            #if UNITY_EDITOR
             Debug.Log("Creating Thread ...");
-
+            #endif
             void Response(UnityWebRequest request)
             {
                 if(request.result != UnityWebRequest.Result.Success)
                 {
+                    #if UNITY_EDITOR
                     Debug.Log("Create Thread Request Failed, trying agian .... \n"+ request.error);
+                    #endif
                     SendRequest();
                     return;
                 }
                 
+                #if UNITY_EDITOR
                 Debug.Log("Create Thread Successfully, \n"+request.downloadHandler.text);
+                #endif
                 CreateThread thread = JsonConvert.DeserializeObject<CreateThread>(request.downloadHandler.text);
+                #if UNITY_EDITOR
                 Debug.Log("Thread Successfully convert to entity" + thread.id);
+                #endif
                 threadId = thread.id;
                 AddAssistantToThread();
             }
         }
-
-        [ContextMenu("Add Assistant")]
-        public void AddAssistantToThread()
+        private void AddAssistantToThread()
         {
             void SendRequest() =>
-                OpenAIAssistantProvider.AddAssistantToThread(threadId,new AddAssistantToThreadDTO(assistantId,instructionAssistant),Response);
+                OpenAIAssistantProvider.AddAssistantToThread(threadId,
+                    new AddAssistantToThreadDTO(config.assistantId,config.instructionAssistant),Response);
 
             SendRequest();
+            #if UNITY_EDITOR
             Debug.Log("Adding Assistant To Thread Thread ...");
-
+            #endif
             void Response(UnityWebRequest request)
             {
                 if(request.result != UnityWebRequest.Result.Success)
                 {
+                    #if UNITY_EDITOR
                     Debug.Log("Add Assistant To Thread Request Failed, trying agian .... \n"+ request.error);
+                    #endif
                     SendRequest();
                     return;
                 }
                 
-                Debug.Log("Add Assistant To Thread Successfully, \n"+request.downloadHandler.text);
+                #if UNITY_EDITOR
+                Debug.Log("Create Thread Successfully, \n"+request.downloadHandler.text);
+                #endif
             }
         }
 
-        [ContextMenu("Send Message")]
-        public void SendMessageLocal() =>
-            SendMsg(message);
-
-        public void SendMsg(string message)
+        public void SendMessage(string message)
         {
             void SendRequest() =>
                 OpenAIAssistantProvider.AddMessageToThread(threadId, new AddMessageToThreadDTO("user", message), Response);
 
             SendRequest();
+            #if UNITY_EDITOR
             Debug.Log("Sending Message \n"+message);
+            #endif
 
             void Response(UnityWebRequest request)
             {
@@ -90,53 +93,63 @@ namespace UHTTP.Sample.OpenAIAssistant
                     return;
                 }
 
+                #if UNITY_EDITOR
                 Debug.Log("Send Message Successfully, \n"+request.downloadHandler.text);
-                CoroutineRunner.Run(RunAssistant, getMessagesAfterSendMessageDelay);
+                #endif
+                CoroutineRunner.Run(RunAssistant, config.delayGetMessage);
             }
         }
-
-        [ContextMenu("Run Assistant")]
-        public void RunAssistant()
+        private void RunAssistant()
         {
             void SendRequest() =>
-                OpenAIAssistantProvider.RunAssistantToThread(threadId,assistantId, Response);
+                OpenAIAssistantProvider.RunAssistantToThread(threadId,config.assistantId, Response);
 
             SendRequest();
+            #if UNITY_EDITOR
             Debug.Log("Running Assistant");
+            #endif
 
             void Response(UnityWebRequest request)
             {
                 if(request.result != UnityWebRequest.Result.Success)
                 {
+                    #if UNITY_EDITOR
                     Debug.Log("Run Assistant Request Failed, trying agian .... \n"+ request.error);
+                    #endif
                     SendRequest();
                     return;
                 }
 
+                #if UNITY_EDITOR
                 Debug.Log("Run Assistant Successfully, \n"+request.downloadHandler.text);
-                CoroutineRunner.Run(GetMessages, getMessagesAfterSendMessageDelay);
+                #endif
+                CoroutineRunner.Run(GetMessages, config.delayGetMessage);
             }
         }
-
-        [ContextMenu("Get Messages")]
         public void GetMessages()
         {
             void SendRequest() =>
                 OpenAIAssistantProvider.GetMessagesThread(threadId, Response);
 
             SendRequest();
+            #if UNITY_EDITOR
             Debug.Log("Getting Messages");
+            #endif
 
             void Response(UnityWebRequest request)
             {
                 if(request.result != UnityWebRequest.Result.Success)
                 {
+                    #if UNITY_EDITOR
                     Debug.Log("GetMessages Request Failed, trying agian .... \n"+ request.error);
+                    #endif
                     SendRequest();
                     return;
                 }
 
+                #if UNITY_EDITOR
                 Debug.Log("GetMessages Message Successfully, \n"+request.downloadHandler.text);
+                #endif
             }
         }
     }
