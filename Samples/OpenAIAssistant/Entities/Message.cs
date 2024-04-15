@@ -4,13 +4,13 @@ using UnityEngine;
 namespace UHTTP.Sample.OpenAIAssistant.ChatBot
 {
     [System.Serializable]
-    public partial class MessageList
+    public partial class Messages
     {
         [JsonProperty("object")]
         public string Object { get; set; }
 
         [JsonProperty("data")]
-        public Message[] Messages { get; set; }
+        public Message[] messages { get; set; }
 
         [JsonProperty("first_id")]
         public string FirstId { get; set; }

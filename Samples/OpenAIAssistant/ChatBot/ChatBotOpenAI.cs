@@ -15,13 +15,18 @@ namespace UHTTP.Sample.OpenAIAssistant.ChatBot
         private bool logInEditor;
 
         // Config
-        public ChatBotOpenAI(ChatBotConfig config,UnityAction threadCreated, bool logInEditor = true) 
+        public ChatBotOpenAI(ChatBotConfig config, UnityAction threadCreated) =>
+            SetConfig(config, threadCreated);
+
+        public void SetConfig(ChatBotConfig config,UnityAction threadCreated) 
         {
             this.config = config;
             OpenAIAssistantProvider.Initialize(this.config.token);
-            CreateThread(threadCreated);
-            this.logInEditor = logInEditor;
+            if(string.IsNullOrEmpty(threadId = config.threadId))
+                CreateThread(threadCreated);
+            logInEditor = config.logInEditor;
         }
+
         private void CreateThread(UnityAction threadCreated)
         {
             void SendRequest() =>
@@ -54,7 +59,7 @@ namespace UHTTP.Sample.OpenAIAssistant.ChatBot
             }
         }
 
-        public void SendMessage(string message,UnityAction<string> result)
+        public void SendMessage(string message,UnityAction<Message> result)
         {
             void SendRequest() =>
                 OpenAIAssistantProvider.AddMessageToThread(threadId, new AddMessageToThreadDTO("user", message), Response);
@@ -80,7 +85,7 @@ namespace UHTTP.Sample.OpenAIAssistant.ChatBot
                 CoroutineRunner.Run(()=> RunAssistant(RunAssistantComplete), config.delayGetMessage);
 
                 void RunAssistantComplete() =>
-                    CoroutineRunner.Run(()=> GetMessages(result), config.delayGetMessage);
+                    CoroutineRunner.Run(()=> GetLastMessage(result), config.delayGetMessage);
             }
         }
         private void RunAssistant(Action completeAction)
@@ -112,7 +117,9 @@ namespace UHTTP.Sample.OpenAIAssistant.ChatBot
                 completeAction?.Invoke();
             }
         }
-        public void GetMessages(UnityAction<string> result)
+        public void GetLastMessage(UnityAction<Message> result) =>
+            GetMessages(messages => result?.Invoke(messages.Length > 0 ? messages[0] : null));
+        public void GetMessages(UnityAction<Message[]> result)
         {
             void SendRequest() =>
                 OpenAIAssistantProvider.GetMessagesThread(threadId, Response);
@@ -137,9 +144,12 @@ namespace UHTTP.Sample.OpenAIAssistant.ChatBot
                 if(logInEditor) Debug.Log("GetMessages Message Successfully, \n"+request.downloadHandler.text);
                 #endif
 
-                MessageList messageList = JsonConvert.DeserializeObject<MessageList>(request.downloadHandler.text);
-                var message = messageList.Messages[0];
-                message.Print();
+                Messages messages = JsonConvert.DeserializeObject<Messages>(request.downloadHandler.text);
+                var message = messages.messages[0];
+                #if UNITY_EDITOR
+                if(logInEditor) message.Print();
+                #endif
+
                 var resetRequest = message.Contents.Length == 0 || message.Role != CHAT_BOT_ROLE;
 
                 if (resetRequest)
@@ -149,7 +159,7 @@ namespace UHTTP.Sample.OpenAIAssistant.ChatBot
                     return;
                 }
 
-                result?.Invoke(request.downloadHandler.text);
+                result?.Invoke(messages.messages);
             }
         }
     }
