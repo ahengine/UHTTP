@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.Networking;
+using UHTTP;
 
-namespace UHTTP.Sample.Todo
+namespace UHTTP_Sample.Todo
 {
     public class TodoCodeBaseProviderRuntimeTest : MonoBehaviour
     {

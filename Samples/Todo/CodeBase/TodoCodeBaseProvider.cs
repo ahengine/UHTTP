@@ -1,7 +1,8 @@
 using System;
 using UnityEngine.Networking;
+using UHTTP;
 
-namespace UHTTP.Sample.Todo
+namespace UHTTP_Sample.Todo
 {
     public static class TodoCodeBaseProvider
     {

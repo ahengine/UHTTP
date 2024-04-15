@@ -1,4 +1,4 @@
-namespace UHTTP.Sample.OpenAIAssistant.ChatBot
+namespace UHTTP_Sample.OpenAIAssistant.ChatBot
 {
     [System.Serializable]
     public record ChatBotConfig
