@@ -160,7 +160,9 @@ namespace UHTTP.Sample.OpenAIAssistant.ChatBot
 
                 #if UNITY_EDITOR
                 Debug.Log("GetMessages Message Successfully, \n"+request.downloadHandler.text);
-                #endif
+#endif
+
+                result?.Invoke(request.downloadHandler.text);
             }
         }
     }
