@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UHTTP.Sample.OpenAIAssistant
+namespace UHTTP.Sample.OpenAIAssistant.ChatBot
 {
     public class ChatBotOpenAIRuntimeTest : MonoBehaviour
     {
@@ -9,15 +9,15 @@ namespace UHTTP.Sample.OpenAIAssistant
         private ChatBotOpenAI chatBot;
 
         private void Awake() =>
-            chatBot = new ChatBotOpenAI(config);
+            chatBot = new ChatBotOpenAI(config,result => Debug.Log("Chat Bot Intialize: "+result));
 
 
         [ContextMenu("Send Message")]
         public void SendMessageLocal() =>
-            chatBot.SendMessage(message);
+            chatBot.SendMessage(message,messages => {});
 
         [ContextMenu("Get Messages")]
         public void GetMessages() =>
-            chatBot.GetMessages();
+            chatBot.GetMessages(message => {});
     }
 }

@@ -1,8 +1,11 @@
-[System.Serializable]
-public record ChatBotConfig
+namespace UHTTP.Sample.OpenAIAssistant.ChatBot
 {
-    public string token;
-    public string assistantId;
-    public string instructionAssistant;
-    public float delayGetMessage = 2;
+    [System.Serializable]
+    public record ChatBotConfig
+    {
+        public string token;
+        public string assistantId;
+        public string instructionAssistant;
+        public float delayGetMessage = 2;
+    }
 }

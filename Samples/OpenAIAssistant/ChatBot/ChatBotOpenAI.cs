@@ -1,8 +1,10 @@
+using System;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Networking;
 
-namespace UHTTP.Sample.OpenAIAssistant
+namespace UHTTP.Sample.OpenAIAssistant.ChatBot
 {
     public class ChatBotOpenAI
     {
@@ -10,13 +12,13 @@ namespace UHTTP.Sample.OpenAIAssistant
         private string threadId;
 
         // Config
-        public ChatBotOpenAI(ChatBotConfig config) 
+        public ChatBotOpenAI(ChatBotConfig config,UnityAction<bool> initializeResult) 
         {
             this.config = config;
             OpenAIAssistantProvider.Initialize(this.config.token);
-            CreateThread();
+            CreateThread(initializeResult);
         }
-        private void CreateThread()
+        private void CreateThread(UnityAction<bool> initializeResult)
         {
             void SendRequest() =>
                 OpenAIAssistantProvider.CreateThread(Response);
@@ -44,10 +46,10 @@ namespace UHTTP.Sample.OpenAIAssistant
                 Debug.Log("Thread Successfully convert to entity" + thread.id);
                 #endif
                 threadId = thread.id;
-                AddAssistantToThread();
+                AddAssistantToThread(initializeResult);
             }
         }
-        private void AddAssistantToThread()
+        private void AddAssistantToThread(UnityAction<bool> initializeResult)
         {
             void SendRequest() =>
                 OpenAIAssistantProvider.AddAssistantToThread(threadId,
@@ -71,10 +73,12 @@ namespace UHTTP.Sample.OpenAIAssistant
                 #if UNITY_EDITOR
                 Debug.Log("Create Thread Successfully, \n"+request.downloadHandler.text);
                 #endif
+
+                initializeResult?.Invoke(true);
             }
         }
 
-        public void SendMessage(string message)
+        public void SendMessage(string message,UnityAction<string> result)
         {
             void SendRequest() =>
                 OpenAIAssistantProvider.AddMessageToThread(threadId, new AddMessageToThreadDTO("user", message), Response);
@@ -96,10 +100,14 @@ namespace UHTTP.Sample.OpenAIAssistant
                 #if UNITY_EDITOR
                 Debug.Log("Send Message Successfully, \n"+request.downloadHandler.text);
                 #endif
-                CoroutineRunner.Run(RunAssistant, config.delayGetMessage);
+
+                CoroutineRunner.Run(()=> RunAssistant(RunAssistantComplete), config.delayGetMessage);
+
+                void RunAssistantComplete() =>
+                    CoroutineRunner.Run(()=> GetMessages(result), config.delayGetMessage);
             }
         }
-        private void RunAssistant()
+        private void RunAssistant(Action completeAction)
         {
             void SendRequest() =>
                 OpenAIAssistantProvider.RunAssistantToThread(threadId,config.assistantId, Response);
@@ -123,10 +131,13 @@ namespace UHTTP.Sample.OpenAIAssistant
                 #if UNITY_EDITOR
                 Debug.Log("Run Assistant Successfully, \n"+request.downloadHandler.text);
                 #endif
-                CoroutineRunner.Run(GetMessages, config.delayGetMessage);
+
+                completeAction?.Invoke();
+
+
             }
         }
-        public void GetMessages()
+        public void GetMessages(UnityAction<string> result)
         {
             void SendRequest() =>
                 OpenAIAssistantProvider.GetMessagesThread(threadId, Response);
