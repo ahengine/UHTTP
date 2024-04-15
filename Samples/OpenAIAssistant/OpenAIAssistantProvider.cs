@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.Networking;
+using Newtonsoft.Json;
 
 namespace UHTTP.Sample.OpenAIAssistant
 {
@@ -19,8 +20,8 @@ namespace UHTTP.Sample.OpenAIAssistant
             new KeyValuePair<string, string>("OpenAI-Beta", "assistants=v1")
         };
 
-        public static void Initialize() =>
-            JWTTokenResolver.SetAccessToken(ACCESS_TOKEN);
+        public static void Initialize(string token = null) =>
+            JWTTokenResolver.SetAccessToken(token ?? ACCESS_TOKEN);
 
 
         public static void CreateAssistant(CreateAssistantDTO data, Action<UnityWebRequest> callback) =>
@@ -28,7 +29,7 @@ namespace UHTTP.Sample.OpenAIAssistant
             {
                 URL = baseURL + "assistants",
                 Method = UnityWebRequest.kHttpVerbPOST,
-                BodyJson = JsonUtility.ToJson(data),
+                BodyJson = JsonConvert.SerializeObject(data),
                 Headers = Headers,
                 HaveAuth = true
             }.CreateRequest(callback).Send();
@@ -47,24 +48,34 @@ namespace UHTTP.Sample.OpenAIAssistant
             {
                 URL = baseURL + "threads/" + threadId + "/messages",
                 Method = UnityWebRequest.kHttpVerbPOST,
-                BodyJson = JsonUtility.ToJson(data),      
+                BodyJson = JsonConvert.SerializeObject(data),
                 Headers = Headers,
                 HaveAuth = true
             }.CreateRequest(callback).Send();
 
 
-        public static void AddAssistantToThreadDTO(string threadId, AddAssistantToThreadDTO data, Action<UnityWebRequest> callback) =>
+        public static void AddAssistantToThread(string threadId, AddAssistantToThreadDTO data, Action<UnityWebRequest> callback) =>
             new HTTPRequestData()
             {
                 URL = baseURL + "threads/" + threadId + "/runs",
                 Method = UnityWebRequest.kHttpVerbPOST,
-                BodyJson = JsonUtility.ToJson(data),
+                BodyJson = JsonConvert.SerializeObject(data),
                 Headers = Headers,
                 HaveAuth = true
             }.CreateRequest(callback).Send();
 
-        
-        public static void GetMessagesThread(string threadId, AddAssistantToThreadDTO data, Action<UnityWebRequest> callback) =>
+        public static void RunAssistantToThread(string threadId, string assistantId, Action<UnityWebRequest> callback) =>
+            new HTTPRequestData()
+            {
+                URL = baseURL + "threads/" + threadId + "/runs",
+                Method = UnityWebRequest.kHttpVerbPOST,
+                BodyJson = JsonConvert.SerializeObject(new RunAssistantToThreadDTO(assistantId)),
+                Headers = Headers,
+                HaveAuth = true
+            }.CreateRequest(callback).Send();
+
+
+        public static void GetMessagesThread(string threadId, Action<UnityWebRequest> callback) =>
             new HTTPRequestData()
             {
                 URL = baseURL + "threads/" + threadId + "/messages",

@@ -3,8 +3,8 @@ namespace UHTTP.Sample.OpenAIAssistant
     [System.Serializable]
     public record CreateAssistantDTO
     {
-        public string instructions { private set; get; }
         public string name { private set; get; }
+        public string instructions { private set; get; }
         public string tools { private set; get; }
         public string model { private set; get; }
 
