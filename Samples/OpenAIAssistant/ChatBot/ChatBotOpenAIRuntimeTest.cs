@@ -9,7 +9,7 @@ namespace UHTTP.Sample.OpenAIAssistant.ChatBot
         private ChatBotOpenAI chatBot;
 
         private void Awake() =>
-            chatBot = new ChatBotOpenAI(config,result => Debug.Log("Chat Bot Intialize: "+result));
+            chatBot = new ChatBotOpenAI(config,() => Debug.Log("Chat bot Initialized"));
 
 
         [ContextMenu("Send Message")]

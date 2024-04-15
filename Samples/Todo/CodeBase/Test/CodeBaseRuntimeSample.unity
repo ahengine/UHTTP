@@ -245,12 +245,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1779dbb3cd3a29144ad0cb257c1bdc17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  getMessagesAfterSendMessageDelay: 2
   message: hi how are you?
-  token: 
-  threadId: 
-  assistantId: 
-  instructionAssistant: 
+  config:
+    token: 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
+    assistantId: asst_kVb46cTjMWOEuVNhpsVCxOeE
+    delayGetMessage: 7
 --- !u!4 &1280146323
 Transform:
   m_ObjectHideFlags: 0
