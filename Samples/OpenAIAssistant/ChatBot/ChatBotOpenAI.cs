@@ -23,31 +23,13 @@ namespace UHTTP.Sample.OpenAIAssistant.ChatBot
             if(string.IsNullOrEmpty(config.threadId))
                 CreateThread(threadCreated);
         }
-
-        private void CreateThread(UnityAction threadCreated)
+        private void CreateThread(UnityAction threadCreated) 
         {
-            void SendRequest() =>
-                OpenAIAssistantProvider.CreateThread(Response);
+            Request("Create Thread",response => OpenAIAssistantProvider.CreateThread(response),Response);
 
-            SendRequest();
-            #if UNITY_EDITOR
-            if(config.logInEditor) Debug.Log("Creating Thread ...");
-            #endif
-            void Response(UnityWebRequest request)
+            void Response(string json)
             {
-                if(request.result != UnityWebRequest.Result.Success)
-                {
-                    #if UNITY_EDITOR
-                    if(config.logInEditor) Debug.Log("Create Thread Request Failed, trying agian .... \n"+ request.error);
-                    #endif
-                    SendRequest();
-                    return;
-                }
-                
-                #if UNITY_EDITOR
-                if(config.logInEditor) Debug.Log("Create Thread Successfully, \n"+request.downloadHandler.text);
-                #endif
-                CreateThread thread = JsonConvert.DeserializeObject<CreateThread>(request.downloadHandler.text);
+                CreateThread thread = JsonConvert.DeserializeObject<CreateThread>(json);
                 #if UNITY_EDITOR
                 if(config.logInEditor) Debug.Log("Thread Successfully convert to entity" + thread.id);
                 #endif
@@ -58,28 +40,11 @@ namespace UHTTP.Sample.OpenAIAssistant.ChatBot
 
         public void SendMessage(string message,UnityAction<Message> result)
         {
-            void SendRequest() =>
-                OpenAIAssistantProvider.AddMessageToThread(config.threadId, new AddMessageToThreadDTO("user", message), Response);
+            Request("Send Message",response => OpenAIAssistantProvider.AddMessageToThread(config.threadId, new AddMessageToThreadDTO("user", message), response),Response);
 
-            SendRequest();
-            #if UNITY_EDITOR
-            if(config.logInEditor) Debug.Log("Sending Message \n"+message);
-            #endif
-
-            void Response(UnityWebRequest request)
+            void Response(string json)
             {
-                if(request.result != UnityWebRequest.Result.Success)
-                {
-                    if(config.logInEditor) Debug.Log("SendMessage Request Failed, trying agian .... \n"+ request.error);
-                    SendRequest();
-                    return;
-                }
-
-                #if UNITY_EDITOR
-                if(config.logInEditor) Debug.Log("Send Message Successfully, \n"+request.downloadHandler.text);
-                #endif
-
-                CoroutineRunner.Run(()=> RunAssistant(RunAssistantComplete), config.delayGetMessage);
+              CoroutineRunner.Run(()=> RunAssistant(RunAssistantComplete), config.delayGetMessage);
 
                 void RunAssistantComplete() =>
                     CoroutineRunner.Run(()=> GetLastMessage(result), config.delayGetMessage);
@@ -87,76 +52,68 @@ namespace UHTTP.Sample.OpenAIAssistant.ChatBot
         }
         private void RunAssistant(Action completeAction)
         {
-            void SendRequest() =>
-                OpenAIAssistantProvider.RunAssistantToThread(config.threadId,config.assistantId, Response);
+            Request("Send Message",response => OpenAIAssistantProvider.RunAssistantToThread(config.threadId,config.assistantId, response),Response);
 
-            SendRequest();
-            #if UNITY_EDITOR
-            if(config.logInEditor) Debug.Log("Running Assistant");
-            #endif
-
-            void Response(UnityWebRequest request)
-            {
-                if(request.result != UnityWebRequest.Result.Success)
-                {
-                    #if UNITY_EDITOR
-                    if(config.logInEditor) Debug.Log("Run Assistant Request Failed, trying agian .... \n"+ request.error);
-                    #endif
-                    SendRequest();
-                    return;
-                }
-
-                #if UNITY_EDITOR
-                if(config.logInEditor) Debug.Log("Run Assistant Successfully, \n"+request.downloadHandler.text);
-#endif
-
-                //CoroutineRunner.Run(() => completeAction?.Invoke(), config.delayGetMessage);
+            void Response(string json) =>
                 completeAction?.Invoke();
-            }
         }
+
         public void GetLastMessage(UnityAction<Message> result) =>
             GetMessages(messages => result?.Invoke(messages.Length > 0 ? messages[0] : null));
         public void GetMessages(UnityAction<Message[]> result)
         {
-            void SendRequest() =>
-                OpenAIAssistantProvider.GetMessagesThread(config.threadId, Response);
+            void Send() =>
+                Request("Send Message",response => OpenAIAssistantProvider.GetMessagesThread(config.threadId, response),Response);
 
-            SendRequest();
-            #if UNITY_EDITOR
-            if(config.logInEditor) Debug.Log("Getting Messages");
-            #endif
+            Send();
 
-            void Response(UnityWebRequest request)
+            void Response(string json) 
             {
-                if(request.result != UnityWebRequest.Result.Success)
-                {
-                    #if UNITY_EDITOR
-                    if(config.logInEditor) Debug.Log("GetMessages Request Failed, trying agian .... \n"+ request.error);
-                    #endif
-                    SendRequest();
-                    return;
-                }
-
-                #if UNITY_EDITOR
-                if(config.logInEditor) Debug.Log("GetMessages Message Successfully, \n"+request.downloadHandler.text);
-                #endif
-
-                Messages messages = JsonConvert.DeserializeObject<Messages>(request.downloadHandler.text);
+                Messages messages = JsonConvert.DeserializeObject<Messages>(json);
                 var message = messages.messages[0];
                 #if UNITY_EDITOR
-                if(config.logInEditor) message.Print();
+                    if(config.logInEditor) message.Print();
                 #endif
 
                 var resetRequest = message.Contents.Length == 0 || message.Role != CHAT_BOT_ROLE;
 
                 if (resetRequest)
                 {
-                    CoroutineRunner.Run(SendRequest, config.delayGetMessage);
+                    CoroutineRunner.Run(Send, config.delayGetMessage);
                     Debug.Log("Waiting for assistant message ...");
                     return;
                 }
 
                 result?.Invoke(messages.messages);
+            }
+        }
+    
+        private void Request(string reuqestName,UnityAction<Action<UnityWebRequest>> request,UnityAction<string> requestCompleted)
+        {
+            void SendRequest() =>
+                request?.Invoke(Response);
+
+            SendRequest();
+            #if UNITY_EDITOR
+            if(config.logInEditor) Debug.Log(reuqestName+" ...");
+            #endif
+
+            void Response(UnityWebRequest request)
+            {
+                if(request.result != UnityWebRequest.Result.Success)
+                {
+                    #if UNITY_EDITOR
+                    if(config.logInEditor) Debug.Log(reuqestName+" Request Failed, trying agian .... \n"+ request.error);
+                    #endif
+                    SendRequest();
+                    return;
+                }
+                
+                #if UNITY_EDITOR
+                if(config.logInEditor) Debug.Log(reuqestName+" Successfully, \n"+request.downloadHandler.text);
+                #endif
+
+                requestCompleted?.Invoke(request.downloadHandler.text);
             }
         }
     }
