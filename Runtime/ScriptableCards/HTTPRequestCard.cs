@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections.Generic;
-using System.Net.Cache;
 
 namespace UHTTP
 {
@@ -72,5 +71,8 @@ namespace UHTTP
 
         public void Send(Action<UnityWebRequest> callback) =>
                 CreateRequest(callback).Send();
+
+        public void SetURL(string url) => 
+                URL = url;
     }
 }
