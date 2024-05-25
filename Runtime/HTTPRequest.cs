@@ -13,6 +13,7 @@ namespace UHTTP
     {
         public HTTPRequestData data;
         public Action<UnityWebRequest> callback;
+        public Action<UnityWebRequest> callbackStream;
         public UnityWebRequest webRequest;
 
         public Func<UnityWebRequest, UnityWebRequest> AddOptionsRequest;
@@ -112,7 +113,13 @@ namespace UHTTP
             }
 
             request.downloadHandler = new DownloadHandlerBuffer();
-            yield return request.SendWebRequest();
+            request.SendWebRequest();
+
+            while (!request.isDone)
+            {
+                callbackStream?.Invoke(request);
+                yield return null;
+            }
 
             if (!DoRenewToken())
                 callback?.Invoke(request);
