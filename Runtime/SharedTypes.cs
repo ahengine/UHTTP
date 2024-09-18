@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace UHTTP
 {
@@ -32,6 +31,19 @@ namespace UHTTP
         public string filename;
         public byte[] data;
         public string mimeType;
+
+        public FormBinaryData(string fieldName, byte[] data)
+        {
+            this.fieldName = fieldName;
+            this.data = data;
+        }
+
+        public FormBinaryData(string fieldName, byte[] data, string filename)
+        {
+            this.fieldName = fieldName;
+            this.data = data;
+            this.filename = filename;
+        }
 
         public FormBinaryData(string fieldName, byte[] data, string filename, string mimeType)
         {
