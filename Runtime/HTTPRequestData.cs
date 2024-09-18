@@ -54,6 +54,25 @@ namespace UHTTP
         public Dictionary<string, string> PostFormFields = 
             new Dictionary<string, string>();
 
+        public FormBinaryData FormBinaryData;
+
+        public WWWForm Form()
+        {
+            if(PostFields.Count == 0 && FormBinaryData == null)
+                return null;
+
+            var form = new WWWForm();
+
+            if(FormBinaryData != null)
+                form = FormBinaryData.FormWithBinaryData();
+
+            if(PostFields.Count > 0)
+                foreach (var field in PostFields)
+                    form.AddField(field.Key, field.Value);
+
+            return form;
+        }
+
         public HTTPRequest CreateRequest(Action<UnityWebRequest> callback) =>
             new HTTPRequest(this,callback);
     

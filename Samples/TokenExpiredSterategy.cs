@@ -12,7 +12,6 @@ namespace UHTTP.Sample
 
         public static void Strategy(Action resendRequest,Action requestCallback)
         {
-
             // If you don't have refresh token, finish the request.
             if (string.IsNullOrEmpty(RefreshToken))
             {
@@ -23,9 +22,6 @@ namespace UHTTP.Sample
             SendRefreshToken();
         }
 
-        private static void SendRefreshToken() 
-        {
-            
-        }
+        private static void SendRefreshToken() {}
     }
 }

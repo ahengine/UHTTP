@@ -6,7 +6,6 @@ using UnityEngine.Networking;
 using static UHTTP.JWTTokenResolver;
 using static UHTTP.HTTPRequestCoroutineRunner;
 
-
 namespace UHTTP
 {
     public class HTTPRequest
@@ -31,8 +30,9 @@ namespace UHTTP
                 if(data.PostFields.Count > 0)
                     return UnityWebRequest.Post(data.URL, data.PostFields);
                 
-                if(data.PostFormFields.Count > 0)
-                    return UnityWebRequest.Post(data.URL, data.PostFormFields);
+                var form = data.Form();
+                if (form != null)
+                    return UnityWebRequest.Post(data.URL, form);
 
                 return new UnityWebRequest()
                     {
