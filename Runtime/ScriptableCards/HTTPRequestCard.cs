@@ -71,5 +71,8 @@ namespace UHTTP
 
         public void Send(Action<UnityWebRequest> callback) =>
                 CreateRequest(callback).Send();
+
+        public void SetURL(string url) => 
+                URL = url;
     }
 }
