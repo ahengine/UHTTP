@@ -78,21 +78,45 @@ namespace UHTTP
             return request;
         }
 
-        public void Send() 
-        {
-            webRequest = CreateRequest();
-            Run(SendCoroutine(webRequest));
-        }
-
+        public void Send() =>
+            Run(SendCoroutine(CreateRequest()));
         public Coroutine SendCoroutine()
         {
             webRequest = CreateRequest();
             return Run(SendCoroutine(webRequest));
         }
-
         private IEnumerator SendCoroutine(UnityWebRequest request)
         {
-            bool DoRenewToken()
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SendWebRequest();
+
+            while (!request.isDone)
+            {
+                callbackStream?.Invoke(request);
+                yield return null;
+            }
+
+            if (!DoRenewToken(request))
+                callback?.Invoke(request);
+
+            request.Dispose();
+        }   
+
+        public void SendAsync() =>
+            SendAsyncBase(CreateRequest());
+        private void SendAsyncBase(UnityWebRequest request)
+        {
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SendWebRequest().completed += (op) => 
+            {            
+                if (!DoRenewToken(request))
+                    callback?.Invoke(request);
+
+                request.Dispose();
+            };
+        }
+
+        private bool DoRenewToken(UnityWebRequest request)
             {
                 bool CanRenewToken() 
                 {
@@ -111,20 +135,5 @@ namespace UHTTP
 
                 return false;
             }
-
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SendWebRequest();
-
-            while (!request.isDone)
-            {
-                callbackStream?.Invoke(request);
-                yield return null;
-            }
-
-            if (!DoRenewToken())
-                callback?.Invoke(request);
-
-            request.Dispose();
-        }
     }
 }
