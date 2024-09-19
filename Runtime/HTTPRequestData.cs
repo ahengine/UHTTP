@@ -47,7 +47,6 @@ namespace UHTTP
             new List<KeyValuePair<string, string>>();
 
         // --------------POST--------------
-
         public string BodyJson;
         public Dictionary<string, string> PostFields = 
             new Dictionary<string, string>();

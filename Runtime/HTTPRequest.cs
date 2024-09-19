@@ -3,8 +3,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using static UHTTP.JWTTokenResolver;
+using UHTTP;
 using static UHTTP.HTTPRequestCoroutineRunner;
+using static UHTTP.JWTTokenResolver;
 
 namespace UHTTP
 {
@@ -62,7 +63,7 @@ namespace UHTTP
 
                 // Add JWT
                 if (data.HaveAuth && !string.IsNullOrEmpty(AccessToken))
-                    headers.Add(AccessTokenHeader);
+                    headers.Add(new KeyValuePair<string, string>(HTTPHeaders.HEADER_AUTHORIZATION_KEY, AccessToken));
 
                 // Set
                 if (headers != null && headers.Count > 0)
@@ -96,7 +97,7 @@ namespace UHTTP
                 yield return null;
             }
 
-            if (!DoRenewToken(request))
+            if (!DoRenewToken(request,Send,callback))
                 callback?.Invoke(request);
 
             request.Dispose();
@@ -109,31 +110,11 @@ namespace UHTTP
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SendWebRequest().completed += (op) => 
             {            
-                if (!DoRenewToken(request))
+                if (!DoRenewToken(request,Send,callback))
                     callback?.Invoke(request);
 
                 request.Dispose();
             };
         }
-
-        private bool DoRenewToken(UnityWebRequest request)
-            {
-                bool CanRenewToken() 
-                {
-                    bool FailedAuthorize = 
-                        request.responseCode == (int)HTTPResponseCodes.UNAUTHORIZED_401 || request.responseCode == (int)HTTPResponseCodes.FORBIDEN_403;
-
-                    return data.HaveAuth && FailedAuthorize && TokenExpiredSterategy != null;
-                }
-
-                if (CanRenewToken())
-                {
-                    RemoveAccessToken();
-                    TokenExpiredSterategy.Invoke(Send,()=> callback?.Invoke(request));
-                    return true;
-                }
-
-                return false;
-            }
     }
 }
