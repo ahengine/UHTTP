@@ -7,14 +7,12 @@ namespace UHTTP
 {
     public static class RequestHelperConfig
     {
-        public string BaseURL {private set; get;}
-        public bool UseBearerPrefixAuthHeader {private set; get;} = true;
+        public static string BaseURL {private set; get;}
+        public static bool UseBearerPrefixAuthHeader {private set; get;} = true;
     }
 
     public static class RequestHelper 
     {
-        public static RequestHelperConfig Config = new RequestHelperConfig();
-
         private static Action onTokenExpired { get; set; }
         private static void OnTokenExpired(Action action) =>
             onTokenExpired = action;
@@ -25,11 +23,11 @@ namespace UHTTP
 
         private static string token = null;
         public static void SetToken(string token) =>
-            UHTTP.token = token;
+            RequestHelper.token = token;
 
         public static UnityWebRequest CreateRequest(string appendUrl, string method, string body = null, List<KeyValuePair<string, string>> headers = default)
         {
-            UnityWebRequest req = new UnityWebRequest(Config.BaseURL + appendUrl, method);
+            UnityWebRequest req = new UnityWebRequest(RequestHelperConfig.BaseURL + appendUrl, method);
 
             req.downloadHandler = new DownloadHandlerBuffer();
             if(body != null)
@@ -42,7 +40,7 @@ namespace UHTTP
         }
 
         public static void AddToken(this UnityWebRequest request) 
-            => request.SetRequestHeader("Authorization",Config.UseBearerPrefixAuthHeader ? $"Bearer {token}" : token);
+            => request.SetRequestHeader("Authorization",RequestHelperConfig.UseBearerPrefixAuthHeader ? $"Bearer {token}" : token);
 
         public static void Send(this UnityWebRequest request, Action onComplete = null,bool addTokenIfExist = true, bool haveLoading = false)
         {
