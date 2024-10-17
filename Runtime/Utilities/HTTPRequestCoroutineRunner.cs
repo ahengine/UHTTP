@@ -6,7 +6,7 @@ namespace UHTTP
     public class HTTPRequestCoroutineRunner : MonoBehaviour
     {
         private static HTTPRequestCoroutineRunner instance;
-        private static HTTPRequestCoroutineRunner Instance => instance ?? (instance = new GameObject(typeof(HTTPRequestCoroutineRunner).Name).AddComponent<HTTPRequestCoroutineRunner>());
+        private static HTTPRequestCoroutineRunner Instance => instance ??= new GameObject(typeof(HTTPRequestCoroutineRunner).Name).AddComponent<HTTPRequestCoroutineRunner>();
 
         private void OnDestroy() =>
             instance = null;
